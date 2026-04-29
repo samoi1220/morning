@@ -1,0 +1,1403 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+<title>早課</title>
+<meta name="theme-color" content="#F2F1ED" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#1C1C1E" media="(prefers-color-scheme: dark)" />
+<link rel="manifest" href="manifest.json" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="早課" />
+<link rel="apple-touch-icon" href="icon-180.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<style>
+  /* ─── Design Tokens ─── */
+  :root{
+    --bg:#F2F1ED;
+    --card:#FFFFFF;
+    --card-2:#FBFAF7;
+    --text:#1C1C1E;
+    --text-2:#6B6962;
+    --text-3:#A8A39B;
+    --sep:#E8E5DC;
+    --sep-soft:#F0EDE5;
+    --fill-1:#EFECE3;
+    --fill-2:#E4E0D5;
+    --accent:#C7553D;
+    --accent-soft:#F7E5DE;
+    --green:#5A8E6B;
+    --green-soft:#E1ECDF;
+    --orange:#C29442;
+    --orange-soft:#F4E7C8;
+    --red:#BF3D2A;
+    --shadow-sm:0 1px 2px rgba(28,28,30,.04);
+    --shadow-md:0 2px 8px rgba(28,28,30,.05),0 1px 2px rgba(28,28,30,.04);
+    --shadow-lg:0 8px 24px rgba(28,28,30,.08);
+    --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:20px;
+    --tab-h:64px;
+    --safe-bottom:env(safe-area-inset-bottom);
+    --safe-top:env(safe-area-inset-top);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;overflow-x:hidden}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",
+      "PingFang TC","PingFang SC","Helvetica Neue","Microsoft JhengHei",sans-serif;
+    background:var(--bg);color:var(--text);
+    font-size:15px;line-height:1.5;letter-spacing:-.01em;
+    -webkit-font-smoothing:antialiased;text-size-adjust:100%;
+  }
+  ::selection{background:var(--accent-soft);color:var(--text)}
+  button{font-family:inherit;cursor:pointer;border:none;background:transparent;color:inherit;-webkit-appearance:none}
+  input,textarea,select{font-family:inherit;font-size:inherit;color:inherit;-webkit-appearance:none;border:none;outline:none;background:transparent}
+  input[type=date],input[type=time]{min-height:24px}
+
+  /* ─── 主框架 ─── */
+  .app{
+    min-height:100vh;min-height:100dvh;
+    display:flex;flex-direction:column;
+    max-width:880px;margin:0 auto;
+    padding-top:var(--safe-top);
+  }
+  .app-header{
+    padding:14px 20px 8px;
+    display:flex;align-items:flex-end;justify-content:space-between;
+  }
+  .app-header h1{font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+  .app-header h1 small{
+    font-size:11px;font-weight:500;color:var(--text-3);
+    letter-spacing:.18em;margin-left:8px;text-transform:uppercase;
+  }
+  .app-header .meta{text-align:right;line-height:1.3}
+  .app-header .clock{
+    font-size:15px;font-weight:600;color:var(--text);
+    font-variant-numeric:tabular-nums;letter-spacing:-.01em;
+  }
+  .app-header .date{font-size:12px;color:var(--text-2);font-weight:500}
+
+  .app-main{
+    flex:1;
+    padding:8px 16px calc(var(--tab-h) + var(--safe-bottom) + 24px);
+    overflow-x:hidden;
+  }
+
+  /* ─── Section / Card ─── */
+  .section{margin-bottom:22px}
+  .section-header{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    padding:0 4px 8px;color:var(--text-2);
+  }
+  .section-header .title{font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+  .section-header .meta{
+    font-size:12px;font-weight:500;color:var(--text-3);
+    font-variant-numeric:tabular-nums;
+  }
+  .card{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);overflow:hidden}
+
+  /* ─── Buttons ─── */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    height:36px;padding:0 16px;
+    background:var(--fill-1);color:var(--text);
+    font-size:14px;font-weight:500;border-radius:var(--r-md);
+    transition:transform .08s,background-color .15s;
+  }
+  .btn:active{transform:scale(.97);background:var(--fill-2)}
+  .btn.primary{background:var(--accent);color:#fff}
+  .btn.primary:active{background:#A84531}
+  .btn.danger{color:var(--red);background:transparent}
+  .btn.ghost{background:transparent;color:var(--text-2);height:32px;padding:0 10px;font-size:13px}
+  .btn.ghost:active{background:var(--fill-1)}
+  .btn-icon{
+    width:36px;height:36px;padding:0;border-radius:var(--r-md);
+    background:var(--accent);color:#fff;font-size:20px;font-weight:300;
+    display:inline-flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .btn-icon:active{transform:scale(.95);background:#A84531}
+
+  /* ─── Todo ─── */
+  .todo-add{
+    display:flex;align-items:center;gap:8px;
+    padding:12px 14px;border-bottom:.5px solid var(--sep);
+  }
+  .todo-add .input-wrap{
+    flex:1;display:flex;align-items:center;gap:6px;
+    background:var(--fill-1);border-radius:var(--r-md);padding:9px 12px;
+  }
+  .todo-add .input-wrap input{flex:1;font-size:15px}
+  .todo-add .input-wrap input::placeholder{color:var(--text-3)}
+  .todo-add input[type=time]{
+    width:78px;font-size:13px;color:var(--accent);font-weight:600;
+    font-variant-numeric:tabular-nums;
+  }
+  .todo-add input[type=time]::-webkit-datetime-edit{padding:0}
+
+  .todo-list{list-style:none}
+  .todo-item{
+    display:flex;align-items:center;gap:12px;
+    padding:13px 16px;border-bottom:.5px solid var(--sep-soft);
+    transition:background-color .15s;
+  }
+  .todo-item:last-child{border-bottom:none}
+  .todo-item:active{background:var(--fill-1)}
+  .todo-check{
+    appearance:none;width:22px;height:22px;flex-shrink:0;
+    border:1.6px solid var(--text-3);border-radius:50%;
+    background:var(--card);position:relative;cursor:pointer;
+    transition:all .15s;
+  }
+  .todo-check:checked{background:var(--accent);border-color:var(--accent)}
+  .todo-check:checked::after{
+    content:"";position:absolute;left:6px;top:2px;
+    width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;
+    transform:rotate(45deg);
+  }
+  .todo-text{flex:1;font-size:15px;line-height:1.4;word-break:break-word;min-width:0}
+  .todo-item.done .todo-text{color:var(--text-3);text-decoration:line-through}
+  .todo-time{
+    font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-soft);
+    padding:3px 9px;border-radius:10px;font-variant-numeric:tabular-nums;flex-shrink:0;
+  }
+  .todo-time.fired{background:var(--accent);color:#fff;animation:pulse 1.5s infinite}
+  .todo-item.done .todo-time{color:var(--text-3);background:var(--fill-1)}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+  .todo-del{
+    width:28px;height:28px;border-radius:50%;
+    color:var(--text-3);font-size:18px;line-height:1;opacity:0;transition:opacity .15s;
+  }
+  .todo-item:hover .todo-del{opacity:1}
+  .todo-del:active{background:var(--fill-1);color:var(--red);opacity:1}
+  .empty{text-align:center;padding:36px 16px;color:var(--text-3);font-size:14px}
+
+  /* ─── 番茄鐘 ─── */
+  .pomo{padding:24px 16px 18px;text-align:center}
+  .pomo-time{
+    font-size:64px;font-weight:300;letter-spacing:-.04em;
+    font-variant-numeric:tabular-nums;color:var(--text);line-height:1;margin-bottom:6px;
+  }
+  .pomo-mode{
+    font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--text-2);margin-bottom:18px;font-weight:600;
+  }
+  .pomo-mode.work{color:var(--accent)}
+  .pomo-mode.break{color:var(--green)}
+  .pomo-controls{display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+  .pomo-stats{
+    display:flex;justify-content:space-around;
+    padding:14px 8px 6px;border-top:.5px solid var(--sep);margin-top:8px;
+  }
+  .pomo-stat{text-align:center}
+  .pomo-stat b{
+    display:block;font-size:22px;font-weight:600;color:var(--text);
+    font-variant-numeric:tabular-nums;line-height:1.2;
+  }
+  .pomo-stat span{font-size:11px;color:var(--text-2);font-weight:500}
+  .pomo-settings{
+    padding:14px 16px;border-top:.5px solid var(--sep);
+    display:grid;grid-template-columns:1fr 1fr;gap:12px;background:var(--card-2);
+  }
+  .pomo-settings label{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-2)}
+  .pomo-settings input{
+    width:54px;text-align:right;font-variant-numeric:tabular-nums;
+    color:var(--text);font-weight:600;background:var(--card);border-radius:6px;padding:4px 6px;
+  }
+
+  /* ─── Projects ─── */
+  .search{
+    background:var(--fill-1);border-radius:var(--r-md);
+    padding:8px 12px;margin-bottom:10px;display:flex;align-items:center;gap:6px;
+  }
+  .search svg{color:var(--text-3);flex-shrink:0}
+  .search input{flex:1;font-size:15px}
+  .search input::placeholder{color:var(--text-3)}
+
+  .segmented{
+    display:flex;background:var(--fill-1);border-radius:9px;padding:2px;gap:2px;margin-bottom:10px;
+  }
+  .segmented button{
+    flex:1;min-width:0;height:30px;font-size:12px;font-weight:500;color:var(--text);
+    border-radius:7px;transition:all .2s cubic-bezier(.4,0,.2,1);
+  }
+  .segmented button.active{background:var(--card);box-shadow:0 1px 2px rgba(0,0,0,.06);font-weight:600}
+  .proj-add-btn{margin-bottom:14px;width:100%;height:42px}
+
+  /* 表單 */
+  .proj-form{
+    background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow-md);
+    margin-bottom:14px;overflow:hidden;animation:slideDown .25s ease-out;
+  }
+  @keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+  .proj-form-head{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:12px 16px;border-bottom:.5px solid var(--sep);
+  }
+  .proj-form-head .title{font-size:15px;font-weight:600}
+  .proj-form-body{padding:0}
+  .field-group{
+    display:flex;align-items:center;gap:12px;
+    padding:11px 16px;border-bottom:.5px solid var(--sep-soft);
+  }
+  .field-group:last-child{border-bottom:none}
+  .field-group .k{font-size:13px;color:var(--text-2);font-weight:500;min-width:48px;flex-shrink:0}
+  .field-group input,.field-group select{flex:1;font-size:15px;color:var(--text);text-align:right}
+  .field-group input::placeholder{color:var(--text-3)}
+  .field-row{
+    display:grid;grid-template-columns:1fr 1fr;gap:0;
+    border-bottom:.5px solid var(--sep-soft);
+  }
+  .field-row .field-group{border-bottom:none;border-right:.5px solid var(--sep-soft)}
+  .field-row .field-group:last-child{border-right:none}
+
+  .pf-substages{border-top:6px solid var(--bg);background:var(--card)}
+  .pf-substages-head{padding:12px 16px 8px}
+  .pf-substages-head .label{
+    font-size:11px;color:var(--text-2);letter-spacing:.06em;
+    text-transform:uppercase;font-weight:600;margin-bottom:8px;
+  }
+  .pf-tabs{display:flex;background:var(--fill-1);border-radius:9px;padding:2px;gap:2px}
+  .pf-tabs button{
+    flex:1;height:30px;font-size:12px;font-weight:500;color:var(--text);
+    border-radius:7px;display:flex;align-items:center;justify-content:center;gap:4px;
+  }
+  .pf-tabs button.active{background:var(--card);box-shadow:0 1px 2px rgba(0,0,0,.06);font-weight:600}
+  .pf-tabs .frac{font-size:10px;color:var(--text-3);font-weight:500;font-variant-numeric:tabular-nums}
+  .pf-tabs button.active .frac{color:var(--accent)}
+
+  .pf-sub-list{padding:0 8px}
+  .pf-sub-item{
+    display:flex;align-items:center;gap:10px;
+    padding:8px;border-bottom:.5px solid var(--sep-soft);
+  }
+  .pf-sub-item:last-child{border-bottom:none}
+  .pf-sub-item input[type=checkbox]{
+    appearance:none;width:20px;height:20px;flex-shrink:0;
+    border:1.6px solid var(--text-3);border-radius:50%;
+    background:var(--card);position:relative;cursor:pointer;
+  }
+  .pf-sub-item input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
+  .pf-sub-item input[type=checkbox]:checked::after{
+    content:"";position:absolute;left:5px;top:1px;
+    width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);
+  }
+  .pf-sub-item input[type=text]{flex:1;font-size:14px;padding:4px 0;border-bottom:1px solid transparent}
+  .pf-sub-item input[type=text]:focus{border-bottom-color:var(--accent-soft)}
+  .pf-sub-item.done input[type=text]{color:var(--text-3);text-decoration:line-through}
+  .pf-sub-item .del{width:24px;height:24px;border-radius:50%;color:var(--text-3);font-size:16px}
+  .pf-sub-item .del:active{background:var(--fill-1);color:var(--red)}
+  .pf-sub-empty{color:var(--text-3);font-size:13px;font-style:italic;padding:14px 8px;text-align:center}
+
+  .pf-sub-add{
+    display:flex;gap:8px;padding:10px 16px;
+    background:var(--card-2);border-top:.5px solid var(--sep);
+  }
+  .pf-sub-add input{flex:1;font-size:14px;background:var(--card);border-radius:8px;padding:7px 10px}
+  .pf-sub-add button{height:30px;padding:0 12px;font-size:12px;background:var(--accent);color:#fff;border-radius:8px;font-weight:600}
+
+  .proj-form-actions{
+    display:flex;gap:8px;padding:12px 16px;background:var(--card-2);
+    border-top:.5px solid var(--sep);
+  }
+  .proj-form-actions .btn{flex:1}
+
+  /* 案件卡片 */
+  .proj-list{display:flex;flex-direction:column;gap:10px}
+  .proj{
+    background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);
+    overflow:hidden;transition:box-shadow .15s,transform .08s;position:relative;
+  }
+  .proj.urgent::before,.proj.overdue::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);
+  }
+  .proj.complete{opacity:.55}
+  .proj-row{
+    padding:12px 16px;cursor:pointer;
+    display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;
+    transition:background-color .15s;
+  }
+  .proj-row:active{background:var(--fill-1)}
+  .proj-name{
+    font-size:15px;font-weight:600;letter-spacing:-.01em;
+    grid-column:1/-1;line-height:1.35;
+  }
+  .proj-tags{
+    display:flex;gap:6px;align-items:center;flex-wrap:wrap;
+    grid-column:1/2;font-size:12px;color:var(--text-2);
+  }
+  .proj-client{font-size:13px;color:var(--text-2)}
+  .proj-deadline{
+    font-size:12px;color:var(--text-2);font-weight:500;
+    font-variant-numeric:tabular-nums;
+    grid-column:2/3;text-align:right;white-space:nowrap;
+  }
+  .proj-deadline.urgent{color:var(--accent);font-weight:600}
+  .proj-deadline.overdue{color:var(--red);font-weight:700}
+  .pay{
+    display:inline-flex;align-items:center;
+    font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;
+  }
+  .pay.unpaid{background:var(--fill-1);color:var(--text-2)}
+  .pay.deposit{background:var(--orange-soft);color:var(--orange)}
+  .pay.paid{background:var(--green-soft);color:var(--green)}
+
+  .proj-body{display:none;border-top:.5px solid var(--sep);padding:14px 16px;background:var(--card-2)}
+  .proj.open .proj-body{display:block}
+  .proj-info{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;margin-bottom:14px;font-size:13px}
+  .proj-info .row{display:flex;gap:8px}
+  .proj-info .row .k{color:var(--text-3);min-width:36px;font-size:12px}
+  .proj-info .row .v{color:var(--text)}
+
+  .stages{display:flex;background:var(--fill-1);border-radius:9px;padding:2px;gap:2px;margin-bottom:8px}
+  .stage{
+    flex:1;min-height:42px;border-radius:7px;
+    background:transparent;color:var(--text-2);
+    font-size:12px;font-weight:500;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:1px;cursor:pointer;transition:all .2s cubic-bezier(.4,0,.2,1);
+  }
+  .stage:active{transform:scale(.96)}
+  .stage:hover{background:rgba(0,0,0,.03)}
+  .stage.active{background:var(--text);color:#fff}
+  .stage.done{background:var(--accent-soft);color:var(--accent)}
+  .stage.expanded{background:var(--accent);color:#fff}
+  .stage .frac{font-size:10px;font-weight:600;opacity:.85;font-variant-numeric:tabular-nums}
+
+  .substage{
+    background:var(--card);border-radius:var(--r-md);
+    padding:10px 4px 4px;margin-bottom:10px;box-shadow:var(--shadow-sm);
+  }
+  .substage h4{
+    font-size:11px;color:var(--text-2);letter-spacing:.06em;
+    text-transform:uppercase;font-weight:600;padding:0 12px 8px;
+  }
+  .substage ul{list-style:none}
+  .substage li{
+    display:flex;align-items:center;gap:10px;
+    padding:9px 12px;font-size:14px;border-bottom:.5px solid var(--sep-soft);
+  }
+  .substage li:last-of-type{border-bottom:none}
+  .substage li input[type=checkbox]{
+    appearance:none;width:20px;height:20px;flex-shrink:0;
+    border:1.6px solid var(--text-3);border-radius:50%;
+    background:var(--card);position:relative;cursor:pointer;
+  }
+  .substage li input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
+  .substage li input[type=checkbox]:checked::after{
+    content:"";position:absolute;left:5px;top:1px;
+    width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);
+  }
+  .substage li.done span{color:var(--text-3);text-decoration:line-through}
+  .substage li span{flex:1;line-height:1.35;word-break:break-word;min-width:0}
+  .substage li button{width:24px;height:24px;border-radius:50%;color:var(--text-3);font-size:14px;flex-shrink:0}
+  .substage li button:active{background:var(--fill-1);color:var(--red)}
+  .substage .add-sub{display:flex;gap:6px;padding:8px;border-top:.5px solid var(--sep-soft)}
+  .substage .add-sub input{flex:1;font-size:13px;background:var(--fill-1);border-radius:8px;padding:6px 10px}
+  .substage .add-sub button{height:28px;padding:0 12px;font-size:12px;font-weight:600;background:var(--accent);color:#fff;border-radius:8px}
+
+  .proj-actions{display:flex;justify-content:space-between;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .proj-actions .left,.proj-actions .right{display:flex;gap:6px}
+
+  /* ─── More ─── */
+  .list-group{background:var(--card);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
+  .list-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:13px 16px;font-size:15px;border-bottom:.5px solid var(--sep-soft);
+    transition:background-color .15s;cursor:pointer;
+  }
+  .list-row:last-child{border-bottom:none}
+  .list-row:active{background:var(--fill-1)}
+  .list-row .v{color:var(--text-2);font-size:13px;display:flex;align-items:center;gap:4px}
+  .list-row .chevron{color:var(--text-3);font-size:14px}
+  .list-row.danger{color:var(--red)}
+
+  /* ─── 底部分頁列 ─── */
+  .tab-bar{
+    position:fixed;left:0;right:0;bottom:0;
+    background:rgba(248,247,243,.85);
+    backdrop-filter:saturate(180%) blur(20px);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);
+    border-top:.5px solid var(--sep);
+    padding:8px 0 var(--safe-bottom);
+    display:flex;justify-content:space-around;
+    z-index:50;max-width:880px;margin:0 auto;
+  }
+  .tab-bar button{
+    flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+    padding:6px 8px;color:var(--text-3);transition:color .15s;
+  }
+  .tab-bar button.active{color:var(--accent)}
+  .tab-bar button:active{transform:scale(.95)}
+  .tab-bar svg{width:24px;height:24px;display:block}
+  .tab-bar .label{font-size:10px;font-weight:600}
+
+  .tab-content{display:none}
+  .tab-content.active{display:block;animation:fadeIn .2s}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ─── Toast ─── */
+  .toast{
+    position:fixed;left:50%;bottom:calc(var(--tab-h) + var(--safe-bottom) + 16px);
+    transform:translateX(-50%) translateY(20px);
+    background:rgba(28,28,30,.92);color:#fff;
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    padding:10px 18px;font-size:13px;font-weight:500;
+    border-radius:24px;box-shadow:var(--shadow-lg);
+    opacity:0;transition:all .25s cubic-bezier(.4,0,.2,1);
+    pointer-events:none;max-width:90%;z-index:100;text-align:center;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* ─── Desktop ─── */
+  @media(min-width:880px){
+    body{padding:8px 0}
+    .app{max-width:1100px;padding:0 24px}
+    .app-header{padding:24px 0 16px}
+    .app-header h1{font-size:34px}
+    .app-main{padding:0 0 32px}
+    .tab-bar{display:none}
+    .tab-content{display:block !important}
+    .desktop-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:20px;align-items:start}
+    .desktop-grid > .col{display:flex;flex-direction:column;gap:18px;min-width:0}
+    .pomo-time{font-size:72px}
+  }
+  @media(max-width:480px){
+    .app-header h1{font-size:24px}
+    .pomo-time{font-size:56px}
+    .field-row{grid-template-columns:1fr}
+    .field-row .field-group{border-right:none;border-bottom:.5px solid var(--sep-soft)}
+    .field-row .field-group:last-child{border-bottom:none}
+    .stages{padding:3px;gap:3px}
+    .stage{font-size:11px;min-height:48px}
+    .proj-info{grid-template-columns:1fr}
+  }
+
+  /* ─── Dark Mode ─── */
+  @media(prefers-color-scheme:dark){
+    :root{
+      --bg:#000000;--card:#1C1C1E;--card-2:#2C2C2E;
+      --text:#F5F4F0;--text-2:#9B9892;--text-3:#5C5A55;
+      --sep:#2C2C2E;--sep-soft:#252527;
+      --fill-1:#2C2C2E;--fill-2:#3A3A3C;
+      --accent:#FF6B47;--accent-soft:#3A2820;
+      --green:#7DB389;--green-soft:#1F2F23;
+      --orange:#E0B45F;--orange-soft:#332A18;--red:#FF6B5C;
+      --shadow-sm:0 1px 2px rgba(0,0,0,.3);
+      --shadow-md:0 2px 8px rgba(0,0,0,.4);
+      --shadow-lg:0 8px 24px rgba(0,0,0,.5);
+    }
+    .tab-bar{background:rgba(28,28,30,.85)}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="app-header">
+    <div><h1>早課<small>Morning</small></h1></div>
+    <div class="meta">
+      <div class="clock" id="clockLabel">--:--:--</div>
+      <div class="date" id="dateLabel">—</div>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <div class="desktop-grid">
+
+      <div class="col">
+        <section class="tab-content active" data-tab="today">
+
+          <div class="section">
+            <div class="section-header"><span class="title">今日待辦</span><span class="meta" id="todoCount">0 / 0</span></div>
+            <div class="card">
+              <div class="todo-add">
+                <div class="input-wrap"><input type="text" id="todoInput" placeholder="新增事項…" /></div>
+                <input type="time" id="todoTime" title="提醒時間" />
+                <button class="btn-icon" id="todoAdd" aria-label="新增">＋</button>
+              </div>
+              <ul class="todo-list" id="todoList"></ul>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-header"><span class="title">番茄鐘</span><span class="meta" id="pomoStatus">待機中</span></div>
+            <div class="card">
+              <div class="pomo">
+                <div class="pomo-time" id="pomoTime">25:00</div>
+                <div class="pomo-mode work" id="pomoMode">工作中</div>
+                <div class="pomo-controls">
+                  <button class="btn primary" id="pomoStart">開始</button>
+                  <button class="btn" id="pomoPause">暫停</button>
+                  <button class="btn ghost" id="pomoReset">重置</button>
+                  <button class="btn ghost" id="pomoSkip">跳過</button>
+                </div>
+                <div class="pomo-stats">
+                  <div class="pomo-stat"><b id="statToday">0</b><span>今日完成</span></div>
+                  <div class="pomo-stat"><b id="statTotal">0</b><span>累計番茄</span></div>
+                  <div class="pomo-stat"><b id="statMin">0</b><span>專注分鐘</span></div>
+                </div>
+              </div>
+              <div class="pomo-settings">
+                <label>工作 <input type="number" id="setWork" min="1" max="120" value="25"> 分</label>
+                <label>短休 <input type="number" id="setBreak" min="1" max="60" value="5"> 分</label>
+                <label>長休 <input type="number" id="setLong" min="1" max="60" value="15"> 分</label>
+                <label>循環 <input type="number" id="setCycle" min="2" max="8" value="4"> 次</label>
+              </div>
+            </div>
+          </div>
+
+        </section>
+      </div>
+
+      <div class="col">
+        <section class="tab-content" data-tab="projects">
+          <div class="section">
+            <div class="section-header"><span class="title">案件進度</span><span class="meta" id="projCount">0 件</span></div>
+
+            <div class="search">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>
+              </svg>
+              <input type="text" id="projSearch" placeholder="搜尋案件、客戶、公司…" />
+            </div>
+
+            <div class="segmented" id="projFilters">
+              <button data-f="all" class="active">全部</button>
+              <button data-f="active">進行</button>
+              <button data-f="urgent">即將</button>
+              <button data-f="overdue">逾期</button>
+              <button data-f="done">完成</button>
+            </div>
+
+            <button class="btn primary proj-add-btn" id="projToggleForm">＋ 新增案件</button>
+
+            <div class="proj-form" id="projForm" hidden>
+              <div class="proj-form-head">
+                <span class="title" id="pf_title">新增案件</span>
+                <button class="btn ghost" id="pf_cancel">取消</button>
+              </div>
+              <div class="proj-form-body">
+                <div class="field-group"><span class="k">名稱</span><input type="text" id="pf_name" placeholder="案件名稱" /></div>
+                <div class="field-row">
+                  <div class="field-group"><span class="k">客戶</span><input type="text" id="pf_client" placeholder="窗口" /></div>
+                  <div class="field-group"><span class="k">公司</span><input type="text" id="pf_company" placeholder="公司" /></div>
+                </div>
+                <div class="field-row">
+                  <div class="field-group"><span class="k">開始</span><input type="date" id="pf_start" /></div>
+                  <div class="field-group"><span class="k">交稿</span><input type="date" id="pf_deadline" /></div>
+                </div>
+                <div class="field-group">
+                  <span class="k">付款</span>
+                  <select id="pf_payment">
+                    <option value="unpaid">未付款</option>
+                    <option value="deposit">訂金</option>
+                    <option value="paid">已付款</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="pf-substages">
+                <div class="pf-substages-head">
+                  <div class="label">階段細項</div>
+                  <div class="pf-tabs" id="pf_tabs">
+                    <button type="button" data-pftab="0" class="active">初稿</button>
+                    <button type="button" data-pftab="1">校對</button>
+                    <button type="button" data-pftab="2">印前</button>
+                    <button type="button" data-pftab="3">交稿</button>
+                  </div>
+                </div>
+                <div class="pf-sub-list" id="pf_subList"></div>
+                <div class="pf-sub-add">
+                  <input type="text" id="pf_subAddInput" placeholder="新增細項…" />
+                  <button type="button" id="pf_subAddBtn">加入</button>
+                </div>
+              </div>
+
+              <div class="proj-form-actions">
+                <button class="btn" id="pf_cancel2">取消</button>
+                <button class="btn primary" id="pf_save">建立</button>
+              </div>
+            </div>
+
+            <div class="proj-list" id="projList"></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <section class="tab-content" data-tab="more">
+      <div class="section">
+        <div class="section-header"><span class="title">通知與權限</span></div>
+        <div class="list-group">
+          <div class="list-row" id="permRow"><span>桌面通知</span><span class="v" id="permStatus">未設定</span></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-header"><span class="title">資料</span></div>
+        <div class="list-group">
+          <div class="list-row" id="exportBtn"><span>匯出備份 (.json)</span><span class="chevron">›</span></div>
+          <div class="list-row" id="importBtn"><span>匯入備份</span><span class="chevron">›</span></div>
+          <div class="list-row danger" id="reseedBtn"><span>重置案件清單</span><span class="chevron">›</span></div>
+          <input type="file" id="importFile" accept=".json" style="display:none">
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-header"><span class="title">關於</span></div>
+        <div class="list-group">
+          <div class="list-row"><span>版本</span><span class="v">早課 1.0</span></div>
+          <div class="list-row"><span>儲存方式</span><span class="v">本地瀏覽器</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tab-bar">
+    <button data-go="today" class="active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3.5"/>
+        <path d="M12 3v1.5M12 19.5V21M21 12h-1.5M4.5 12H3M18.36 5.64l-1.06 1.06M6.7 17.3l-1.06 1.06M18.36 18.36l-1.06-1.06M6.7 6.7L5.64 5.64"/>
+      </svg>
+      <span class="label">今日</span>
+    </button>
+    <button data-go="projects">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3.5" y="4.5" width="17" height="4" rx="1"/>
+        <rect x="3.5" y="10.5" width="17" height="4" rx="1"/>
+        <rect x="3.5" y="16.5" width="11" height="3" rx="1"/>
+      </svg>
+      <span class="label">案件</span>
+    </button>
+    <button data-go="more">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/>
+      </svg>
+      <span class="label">更多</span>
+    </button>
+  </nav>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_KEY = "desk-v2";
+const STAGES = ["初稿","校對","印前","交稿"];
+const DEFAULT_SUBTASKS = {
+  0: ["收集素材","版型設計","內容排入"],
+  1: ["一校","二校","客戶確認"],
+  2: ["完稿檢查","印前打樣"],
+  3: ["檔案交付","結案"]
+};
+const SEED_PROJECTS = [
+  {name:"2027 國家公園月曆製作案", client:"歐陽駿", company:"台灣建築雜誌社", startDate:"2026-01-08", deadline:"2026-10-31", payment:"unpaid"},
+  {name:"救國團 — 林口運動中心", client:"李正奇", company:"原點創意", startDate:"2026-03-19", deadline:"2026-04-01", payment:"unpaid"},
+  {name:"救國團 — 西門簡章（新竹拆分 1/3）", client:"李正奇", company:"原點創意", startDate:"2026-03-20", deadline:"2026-04-01", payment:"unpaid"},
+  {name:"救國團 — 天母簡章", client:"李正奇", company:"原點創意", startDate:"2026-03-20", deadline:"2026-04-01", payment:"unpaid"},
+  {name:"救國團 — 演藝簡章（新竹拆分 2/3）", client:"李正奇", company:"原點創意", startDate:"2026-03-21", deadline:"2026-04-01", payment:"unpaid"},
+  {name:"救國團 — 竹北簡章（新竹拆分 3/3）", client:"李正奇", company:"原點創意", startDate:"2026-03-23", deadline:"2026-04-01", payment:"unpaid"},
+  {name:"救國團 — 三重簡章", client:"李正奇", company:"原點創意", startDate:"2026-03-25", deadline:"2026-04-03", payment:"unpaid"},
+  {name:"救國團 — 南京雙面 A4", client:"李正奇", company:"原點創意", startDate:"2026-03-31", deadline:"2026-04-16", payment:"unpaid"},
+  {name:"名片地圖繪製", client:"李正奇", company:"原點創意", startDate:"2026-04-02", deadline:"2026-04-09", payment:"unpaid"},
+  {name:"幼獅盃籃球鬥牛賽", client:"李正奇", company:"原點創意", startDate:"2026-04-09", deadline:"2026-04-25", payment:"unpaid"},
+  {name:"瑞祺電通 2026 ESG 永續報告書", client:"陳怡靜", company:"科建管理顧問", startDate:"2026-04-09", deadline:"2026-07-10", payment:"unpaid"},
+  {name:"救國團 — 天母雙面 A4", client:"李正奇", company:"原點創意", startDate:"2026-04-12", deadline:"", payment:"unpaid"},
+  {name:"救國團 — 八德運動中心", client:"李正奇", company:"原點創意", startDate:"2026-04-13", deadline:"2026-04-27", payment:"unpaid"},
+  {name:"救國團 — 新竹運動中心", client:"李正奇", company:"原點創意", startDate:"2026-04-16", deadline:"", payment:"unpaid"},
+  {name:"AEPL 企業識別", client:"張庭心", company:"", startDate:"2026-04-17", deadline:"", payment:"unpaid"},
+  {name:"2026 兒童藝術教育國際論壇 視覺設計", client:"張育誠", company:"格林希爾會展", startDate:"2026-04-22", deadline:"", payment:"deposit"},
+  {name:"中國醫藥導報 2026年5月台灣報", client:"耿主編", company:"中國醫藥導報", startDate:"2026-04-22", deadline:"2026-04-30", payment:"unpaid"}
+];
+const defaultState = {
+  todos: [], projects: [],
+  pomo: {today:0, total:0, minutes:0, lastDate:""},
+  settings: {work:25, brk:5, long:15, cycle:4},
+  ui: {tab:"today", filter:"all", search:""}
+};
+
+const $ = id => document.getElementById(id);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const todayKey = () => {
+  const d = new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+};
+function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+function makeProject(p){
+  const subtasks = {};
+  for(let i=0;i<STAGES.length;i++){
+    subtasks[i] = DEFAULT_SUBTASKS[i].map(t=>({id:uid(),text:t,done:false}));
+  }
+  return {
+    id: uid(), name:p.name||"", client:p.client||"", company:p.company||"",
+    startDate:p.startDate||"", deadline:p.deadline||"",
+    payment:p.payment||"unpaid",
+    stage:0, subtasks, expandedStage:null, open:false, notes:""
+  };
+}
+function load(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) return Object.assign(structuredClone(defaultState), JSON.parse(raw));
+  }catch(e){}
+  let s = structuredClone(defaultState);
+  s.projects = SEED_PROJECTS.map(makeProject);
+  return s;
+}
+function save(){localStorage.setItem(STORAGE_KEY, JSON.stringify(state))}
+let state = load();
+
+function toast(msg){
+  const t=$("toast"); t.textContent=msg; t.classList.add("show");
+  clearTimeout(t._tid); t._tid=setTimeout(()=>t.classList.remove("show"),2500);
+}
+function notify(title, body){
+  if("Notification" in window && Notification.permission==="granted"){
+    try{ new Notification(title,{body}); }catch(e){}
+  }
+  beep();
+  toast(title + (body?" · "+body:""));
+}
+let audioCtx;
+function beep(){
+  try{
+    audioCtx ||= new (window.AudioContext||window.webkitAudioContext)();
+    const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    o.frequency.value=880; g.gain.value=.0001;
+    o.start();
+    g.gain.exponentialRampToValueAtTime(.18, audioCtx.currentTime+.02);
+    g.gain.exponentialRampToValueAtTime(.0001, audioCtx.currentTime+.6);
+    o.stop(audioCtx.currentTime+.7);
+  }catch(e){}
+}
+
+function tick(){
+  const d = new Date();
+  $("clockLabel").textContent = d.toLocaleTimeString("zh-TW",{hour12:false});
+  const wd = ["日","一","二","三","四","五","六"][d.getDay()];
+  $("dateLabel").textContent = `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,"0")}.${String(d.getDate()).padStart(2,"0")} 週${wd}`;
+}
+setInterval(tick,1000); tick();
+
+function switchTab(name){
+  state.ui.tab = name;
+  document.querySelectorAll(".tab-content").forEach(s=>{
+    s.classList.toggle("active", s.dataset.tab===name);
+  });
+  document.querySelectorAll(".tab-bar button").forEach(b=>{
+    b.classList.toggle("active", b.dataset.go===name);
+  });
+  window.scrollTo({top:0});
+  save();
+}
+document.querySelector(".tab-bar").addEventListener("click", e=>{
+  const btn = e.target.closest("button[data-go]");
+  if(btn) switchTab(btn.dataset.go);
+});
+switchTab(state.ui.tab||"today");
+
+/* ── 待辦 ── */
+function renderTodos(){
+  const ul = $("todoList"); ul.innerHTML="";
+  const today = todayKey();
+  const list = state.todos.filter(t => !t.dateKey || t.dateKey===today);
+  if(list.length===0){
+    ul.innerHTML = `<li class="empty">今日無待辦事項</li>`;
+  } else {
+    list.sort((a,b)=>{
+      if(a.done !== b.done) return a.done?1:-1;
+      if(a.time && b.time) return a.time.localeCompare(b.time);
+      if(a.time) return -1; if(b.time) return 1; return 0;
+    });
+    list.forEach(t=>{
+      const li=document.createElement("li");
+      li.className="todo-item"+(t.done?" done":"");
+      li.innerHTML=`
+        <input type="checkbox" class="todo-check" ${t.done?"checked":""} data-id="${t.id}">
+        <span class="todo-text">${escapeHtml(t.text)}</span>
+        ${t.time?`<span class="todo-time ${t.fired?"fired":""}">${escapeHtml(t.time)}</span>`:""}
+        <button class="todo-del" data-del="${t.id}" aria-label="刪除">×</button>
+      `;
+      ul.appendChild(li);
+    });
+  }
+  const done = list.filter(t=>t.done).length;
+  $("todoCount").textContent = `${done} / ${list.length}`;
+  save();
+}
+$("todoAdd").addEventListener("click",addTodo);
+$("todoInput").addEventListener("keydown",e=>{if(e.key==="Enter")addTodo()});
+$("todoTime").addEventListener("keydown",e=>{if(e.key==="Enter")addTodo()});
+function addTodo(){
+  const text = $("todoInput").value.trim();
+  if(!text){ $("todoInput").focus(); return; }
+  const time = $("todoTime").value;
+  state.todos.push({id:uid(), text, time, done:false, fired:false, dateKey:todayKey()});
+  $("todoInput").value=""; $("todoTime").value="";
+  renderTodos();
+}
+$("todoList").addEventListener("click",e=>{
+  if(e.target.matches(".todo-check")){
+    const t = state.todos.find(x=>x.id===e.target.dataset.id);
+    if(t){ t.done=e.target.checked; renderTodos(); }
+  }
+  if(e.target.matches("[data-del]")){
+    state.todos = state.todos.filter(x=>x.id!==e.target.dataset.del);
+    renderTodos();
+  }
+});
+setInterval(()=>{
+  const now = new Date();
+  const cur = String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
+  const today = todayKey();
+  let changed=false;
+  state.todos.forEach(t=>{
+    if(t.time===cur && !t.done && !t.fired && (!t.dateKey || t.dateKey===today)){
+      t.fired=true; changed=true;
+      notify("⏰ 提醒：" + t.text, cur);
+    }
+  });
+  if(changed) renderTodos();
+},20000);
+
+/* ── 案件 ── */
+function deadlineLabel(dateStr){
+  if(!dateStr) return null;
+  const d = new Date(dateStr+"T23:59:59");
+  if(isNaN(d)) return null;
+  const now = new Date();
+  const diff = Math.ceil((d - now) / 86400000);
+  let text="", urgent=false, overdue=false;
+  if(diff<0) {text=`已逾期 ${-diff} 天`; overdue=true;}
+  else if(diff===0) {text="今日交稿"; urgent=true;}
+  else if(diff<=3) {text=`還剩 ${diff} 天`; urgent=true;}
+  else if(diff<=7) {text=`D-${diff}`; urgent=true;}
+  else text = `${dateStr.slice(5).replace("-",".")}`;
+  return {text, urgent, overdue, diff};
+}
+function projectStatus(p){
+  if(p.stage>=STAGES.length) return "done";
+  const dl = deadlineLabel(p.deadline);
+  if(dl?.overdue) return "overdue";
+  if(dl?.urgent) return "urgent";
+  return "active";
+}
+function stageDoneCount(p, idx){
+  const subs = p.subtasks?.[idx] || [];
+  if(subs.length===0) return null;
+  return {done: subs.filter(s=>s.done).length, total: subs.length};
+}
+const PAY_LABEL = {unpaid:"未付款", deposit:"訂金", paid:"已付款"};
+function nextPayment(p){return {unpaid:"deposit", deposit:"paid", paid:"unpaid"}[p]||"unpaid"}
+
+function renderProjects(){
+  const wrap = $("projList"); wrap.innerHTML="";
+  const filter = state.ui.filter || "all";
+  const search = (state.ui.search||"").toLowerCase().trim();
+  const sorted = [...state.projects].sort((a,b)=>{
+    const ad = a.startDate||"", bd = b.startDate||"";
+    if(!ad && !bd) return 0;
+    if(!ad) return 1;
+    if(!bd) return -1;
+    return bd.localeCompare(ad);
+  });
+
+  let count=0;
+  sorted.forEach(p=>{
+    const status = projectStatus(p);
+    if(filter==="active" && status==="done") return;
+    if(filter==="urgent" && status!=="urgent") return;
+    if(filter==="overdue" && status!=="overdue") return;
+    if(filter==="done" && status!=="done") return;
+    if(search){
+      const hay = (p.name+" "+p.client+" "+p.company).toLowerCase();
+      if(!hay.includes(search)) return;
+    }
+    count++;
+    const dl = deadlineLabel(p.deadline);
+    const dlHtml = dl
+      ? `<span class="proj-deadline ${dl.overdue?"overdue":dl.urgent?"urgent":""}">${dl.text}</span>`
+      : `<span class="proj-deadline" style="color:var(--text-3)">無截止</span>`;
+    const clientLine = (p.client||p.company)
+      ? `<span class="proj-client">${escapeHtml([p.client, p.company].filter(Boolean).join(" / "))}</span>`
+      : "";
+
+    const div = document.createElement("div");
+    div.className = "proj"
+      + (status==="urgent"?" urgent":"")
+      + (status==="overdue"?" overdue":"")
+      + (status==="done"?" complete":"")
+      + (p.open?" open":"");
+    div.dataset.id = p.id;
+
+    const stagesHtml = STAGES.map((s,i)=>{
+      const frac = stageDoneCount(p,i);
+      const fracStr = frac ? `${frac.done}/${frac.total}` : "";
+      const cls = (p.expandedStage===i?" expanded":"")
+                + (p.stage>i?" done":(p.stage===i?" active":""));
+      return `<button class="stage${cls}" data-stage="${i}" type="button">
+        <span>${escapeHtml(s)}</span>
+        ${fracStr?`<span class="frac">${fracStr}</span>`:""}
+      </button>`;
+    }).join("");
+
+    let subHtml = "";
+    if(p.expandedStage!==null && p.expandedStage!==undefined){
+      const idx = p.expandedStage;
+      const subs = p.subtasks[idx]||[];
+      subHtml = `
+        <div class="substage">
+          <h4>${escapeHtml(STAGES[idx])} · 細項</h4>
+          <ul>
+            ${subs.length===0?'<li style="color:var(--text-3);font-style:italic">尚無細項</li>':""}
+            ${subs.map(s=>`
+              <li class="${s.done?"done":""}">
+                <input type="checkbox" data-sub="${s.id}" data-stage="${idx}" ${s.done?"checked":""}>
+                <span>${escapeHtml(s.text)}</span>
+                <button data-subdel="${s.id}" data-stage="${idx}" type="button">×</button>
+              </li>`).join("")}
+          </ul>
+          <div class="add-sub">
+            <input type="text" placeholder="新增細項…" data-subadd="${idx}" />
+            <button data-subaddbtn="${idx}" type="button">加入</button>
+          </div>
+        </div>
+      `;
+    }
+
+    div.innerHTML = `
+      <div class="proj-row" data-toggle="${p.id}">
+        <span class="proj-name">${escapeHtml(p.name)}</span>
+        <div class="proj-tags">
+          ${clientLine}
+          <span class="pay ${p.payment}" data-pay="${p.id}">${PAY_LABEL[p.payment]||"未付款"}</span>
+        </div>
+        ${dlHtml}
+      </div>
+      <div class="proj-body">
+        <div class="proj-info">
+          <div class="row"><span class="k">開始</span><span class="v">${p.startDate?p.startDate.replace(/-/g,"."):"—"}</span></div>
+          <div class="row"><span class="k">交稿</span><span class="v">${p.deadline?p.deadline.replace(/-/g,"."):"未定"}</span></div>
+        </div>
+        <div class="stages">${stagesHtml}</div>
+        ${subHtml}
+        <div class="proj-actions">
+          <div class="left">
+            <button class="btn ghost" data-stageprev="${p.id}">← 上階段</button>
+            <button class="btn ghost" data-stagenext="${p.id}">下階段 →</button>
+          </div>
+          <div class="right">
+            <button class="btn" data-edit="${p.id}">編輯</button>
+            <button class="btn danger" data-pdel="${p.id}">刪除</button>
+          </div>
+        </div>
+      </div>
+    `;
+    wrap.appendChild(div);
+  });
+
+  if(count===0){
+    wrap.innerHTML = `<div class="empty">沒有符合條件的案件</div>`;
+  }
+  $("projCount").textContent = `${count} / ${state.projects.length} 件`;
+  save();
+}
+
+$("projList").addEventListener("click", e=>{
+  const t = e.target;
+  if(t.matches("[data-pay]")){
+    e.stopPropagation();
+    const p = state.projects.find(x=>x.id===t.dataset.pay);
+    if(p){ p.payment = nextPayment(p.payment); renderProjects(); }
+    return;
+  }
+  const toggleEl = t.closest("[data-toggle]");
+  if(toggleEl && !t.closest("[data-pay]")){
+    const p = state.projects.find(x=>x.id===toggleEl.dataset.toggle);
+    if(p){ p.open = !p.open; renderProjects(); return; }
+  }
+  const stageEl = t.closest(".stage");
+  if(stageEl){
+    const idx = +stageEl.dataset.stage;
+    const projEl = stageEl.closest(".proj");
+    const p = state.projects.find(x=>x.id===projEl.dataset.id);
+    if(p){
+      p.expandedStage = (p.expandedStage===idx) ? null : idx;
+      renderProjects();
+    }
+    return;
+  }
+  if(t.matches("[data-sub]")){
+    const projEl = t.closest(".proj");
+    const p = state.projects.find(x=>x.id===projEl.dataset.id);
+    const stage = +t.dataset.stage;
+    const sub = p.subtasks[stage]?.find(s=>s.id===t.dataset.sub);
+    if(sub){
+      sub.done = t.checked;
+      const allDone = p.subtasks[stage].length>0 && p.subtasks[stage].every(s=>s.done);
+      if(allDone && p.stage<=stage){
+        p.stage = stage+1;
+        if(p.stage===STAGES.length) toast(`✓ ${p.name} 全數完成`);
+      }
+      renderProjects();
+    }
+    return;
+  }
+  if(t.matches("[data-subaddbtn]")){
+    const idx = +t.dataset.subaddbtn;
+    const projEl = t.closest(".proj");
+    const input = projEl.querySelector(`[data-subadd="${idx}"]`);
+    const text = input.value.trim();
+    if(!text) return;
+    const p = state.projects.find(x=>x.id===projEl.dataset.id);
+    p.subtasks[idx].push({id:uid(), text, done:false});
+    renderProjects();
+    return;
+  }
+  if(t.matches("[data-subdel]")){
+    const projEl = t.closest(".proj");
+    const stage = +t.dataset.stage;
+    const p = state.projects.find(x=>x.id===projEl.dataset.id);
+    p.subtasks[stage] = p.subtasks[stage].filter(s=>s.id!==t.dataset.subdel);
+    renderProjects();
+    return;
+  }
+  if(t.matches("[data-stageprev]")){
+    const p = state.projects.find(x=>x.id===t.dataset.stageprev);
+    if(p && p.stage>0) p.stage--;
+    renderProjects();
+    return;
+  }
+  if(t.matches("[data-stagenext]")){
+    const p = state.projects.find(x=>x.id===t.dataset.stagenext);
+    if(p && p.stage<STAGES.length) p.stage++;
+    if(p && p.stage===STAGES.length) toast(`✓ ${p.name} 全數完成`);
+    renderProjects();
+    return;
+  }
+  if(t.matches("[data-edit]")){ openProjForm(t.dataset.edit); return; }
+  if(t.matches("[data-pdel]")){
+    const id = t.dataset.pdel;
+    const p = state.projects.find(x=>x.id===id);
+    if(p && confirm(`確定刪除「${p.name}」？`)){
+      state.projects = state.projects.filter(x=>x.id!==id);
+      renderProjects();
+    }
+  }
+});
+$("projList").addEventListener("keydown", e=>{
+  if(e.key==="Enter" && e.target.matches("[data-subadd]")){
+    const idx = e.target.dataset.subadd;
+    const projEl = e.target.closest(".proj");
+    projEl.querySelector(`[data-subaddbtn="${idx}"]`).click();
+  }
+});
+
+/* 表單 */
+let editingId=null, editingSubtasks=null, editingTab=0;
+function closeProjForm(){
+  $("projForm").hidden = true;
+  editingId=null; editingSubtasks=null;
+}
+$("projToggleForm").addEventListener("click",()=>{
+  if(!$("projForm").hidden) closeProjForm();
+  else openProjForm(null);
+});
+$("pf_cancel").addEventListener("click", closeProjForm);
+$("pf_cancel2").addEventListener("click", closeProjForm);
+
+function defaultSubtasksObject(){
+  const o = {};
+  for(let i=0;i<STAGES.length;i++){
+    o[i] = DEFAULT_SUBTASKS[i].map(t=>({id:uid(),text:t,done:false}));
+  }
+  return o;
+}
+function openProjForm(id){
+  if(id){
+    const p = state.projects.find(x=>x.id===id);
+    if(!p) return;
+    editingId = id;
+    editingSubtasks = structuredClone(p.subtasks||defaultSubtasksObject());
+    $("pf_name").value = p.name;
+    $("pf_client").value = p.client;
+    $("pf_company").value = p.company;
+    $("pf_start").value = p.startDate;
+    $("pf_deadline").value = p.deadline;
+    $("pf_payment").value = p.payment;
+    $("pf_save").textContent = "更新";
+    $("pf_title").textContent = "編輯案件";
+  } else {
+    editingId = null;
+    editingSubtasks = defaultSubtasksObject();
+    ["pf_name","pf_client","pf_company","pf_start","pf_deadline"].forEach(id=>$(id).value="");
+    $("pf_payment").value="unpaid";
+    $("pf_save").textContent = "建立";
+    $("pf_title").textContent = "新增案件";
+  }
+  editingTab = 0;
+  document.querySelectorAll("#pf_tabs button").forEach(b=>{
+    b.classList.toggle("active", +b.dataset.pftab===0);
+  });
+  renderEditSubtasks();
+  $("projForm").hidden = false;
+  $("projForm").scrollIntoView({behavior:"smooth", block:"start"});
+  setTimeout(()=>$("pf_name").focus(), 200);
+}
+function syncSubtasksFromForm(){
+  if(!editingSubtasks) return;
+  const items = $("pf_subList").querySelectorAll(".pf-sub-item");
+  const arr = [];
+  items.forEach(el=>{
+    const id = el.dataset.sid;
+    const text = el.querySelector("input[type=text]").value.trim();
+    const done = el.querySelector("input[type=checkbox]").checked;
+    if(text) arr.push({id, text, done});
+  });
+  editingSubtasks[editingTab] = arr;
+}
+function renderEditSubtasks(){
+  const arr = editingSubtasks[editingTab]||[];
+  const wrap = $("pf_subList");
+  if(arr.length===0){
+    wrap.innerHTML = `<div class="pf-sub-empty">此階段尚無細項</div>`;
+  } else {
+    wrap.innerHTML = arr.map(s=>`
+      <div class="pf-sub-item ${s.done?"done":""}" data-sid="${s.id}">
+        <input type="checkbox" ${s.done?"checked":""}>
+        <input type="text" value="${escapeHtml(s.text)}" placeholder="細項…" />
+        <button type="button" class="del" data-pfsubdel="${s.id}" aria-label="刪除">×</button>
+      </div>
+    `).join("");
+  }
+  document.querySelectorAll("#pf_tabs button").forEach(b=>{
+    const idx = +b.dataset.pftab;
+    const a = editingSubtasks[idx]||[];
+    const done = a.filter(s=>s.done).length;
+    let frac = b.querySelector(".frac");
+    if(!frac){ frac = document.createElement("span"); frac.className="frac"; b.appendChild(frac); }
+    frac.textContent = a.length>0 ? ` ${done}/${a.length}` : "";
+  });
+}
+$("pf_tabs").addEventListener("click", e=>{
+  const btn = e.target.closest("button[data-pftab]");
+  if(!btn) return;
+  syncSubtasksFromForm();
+  editingTab = +btn.dataset.pftab;
+  document.querySelectorAll("#pf_tabs button").forEach(b=>{
+    b.classList.toggle("active", +b.dataset.pftab===editingTab);
+  });
+  renderEditSubtasks();
+});
+$("pf_subAddBtn").addEventListener("click", addEditSub);
+$("pf_subAddInput").addEventListener("keydown", e=>{ if(e.key==="Enter") addEditSub(); });
+function addEditSub(){
+  const text = $("pf_subAddInput").value.trim();
+  if(!text) return;
+  syncSubtasksFromForm();
+  editingSubtasks[editingTab].push({id:uid(), text, done:false});
+  $("pf_subAddInput").value="";
+  renderEditSubtasks();
+}
+$("pf_subList").addEventListener("click", e=>{
+  if(e.target.matches("[data-pfsubdel]")){
+    syncSubtasksFromForm();
+    editingSubtasks[editingTab] = editingSubtasks[editingTab].filter(s=>s.id!==e.target.dataset.pfsubdel);
+    renderEditSubtasks();
+  }
+});
+$("pf_subList").addEventListener("change", e=>{
+  if(e.target.matches("input[type=checkbox]")){
+    syncSubtasksFromForm();
+    renderEditSubtasks();
+  }
+});
+$("pf_save").addEventListener("click",()=>{
+  const name = $("pf_name").value.trim();
+  if(!name){ alert("請輸入案件名稱"); $("pf_name").focus(); return; }
+  syncSubtasksFromForm();
+  const data = {
+    name,
+    client: $("pf_client").value.trim(),
+    company: $("pf_company").value.trim(),
+    startDate: $("pf_start").value,
+    deadline: $("pf_deadline").value,
+    payment: $("pf_payment").value
+  };
+  if(editingId){
+    const p = state.projects.find(x=>x.id===editingId);
+    Object.assign(p, data);
+    p.subtasks = editingSubtasks;
+    for(let i=0;i<STAGES.length;i++){
+      const arr = p.subtasks[i]||[];
+      if(arr.length>0 && arr.every(s=>s.done) && p.stage<=i) p.stage = i+1;
+    }
+    toast("✓ 已更新");
+  } else {
+    const newP = makeProject(data);
+    newP.subtasks = editingSubtasks;
+    state.projects.push(newP);
+    toast("✓ 已建立");
+  }
+  closeProjForm();
+  renderProjects();
+});
+
+$("projFilters").addEventListener("click", e=>{
+  if(e.target.matches("button")){
+    state.ui.filter = e.target.dataset.f;
+    document.querySelectorAll("#projFilters button").forEach(b=>b.classList.remove("active"));
+    e.target.classList.add("active");
+    renderProjects();
+  }
+});
+$("projSearch").addEventListener("input", e=>{
+  state.ui.search = e.target.value;
+  renderProjects();
+});
+
+/* 番茄鐘 */
+const pomo = { running:false, mode:"work", remain:0, cycle:0, intv:null };
+function applySettings(){
+  $("setWork").value = state.settings.work;
+  $("setBreak").value = state.settings.brk;
+  $("setLong").value = state.settings.long;
+  $("setCycle").value = state.settings.cycle;
+}
+applySettings();
+["setWork","setBreak","setLong","setCycle"].forEach(id=>{
+  $(id).addEventListener("change",()=>{
+    state.settings.work = +$("setWork").value||25;
+    state.settings.brk  = +$("setBreak").value||5;
+    state.settings.long = +$("setLong").value||15;
+    state.settings.cycle= +$("setCycle").value||4;
+    save();
+    if(!pomo.running) resetPomo();
+  });
+});
+function pomoSecondsForMode(m){
+  return ({work:state.settings.work, brk:state.settings.brk, long:state.settings.long}[m])*60;
+}
+function renderPomo(){
+  const m = Math.floor(pomo.remain/60), s = pomo.remain%60;
+  $("pomoTime").textContent = String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+  $("pomoMode").className = "pomo-mode " + (pomo.mode==="work"?"work":"break");
+  $("pomoMode").textContent = pomo.mode==="work"?"工作中":pomo.mode==="long"?"長休息":"短休息";
+  $("pomoStatus").textContent = pomo.running?"進行中":"待機中";
+  document.title = (pomo.running?$("pomoTime").textContent+" · ":"") + "早課";
+}
+function resetPomo(){
+  pomo.running=false; pomo.mode="work"; pomo.cycle=0;
+  pomo.remain=pomoSecondsForMode("work");
+  clearInterval(pomo.intv);
+  renderPomo();
+}
+function nextPhase(){
+  if(pomo.mode==="work"){
+    state.pomo.today = (state.pomo.lastDate===todayKey()? state.pomo.today : 0) + 1;
+    state.pomo.lastDate = todayKey();
+    state.pomo.total += 1;
+    state.pomo.minutes += state.settings.work;
+    notify("🍅 番茄完成","起來活動一下");
+    pomo.cycle += 1;
+    pomo.mode = (pomo.cycle % state.settings.cycle === 0) ? "long" : "brk";
+  } else {
+    notify("☕ 休息結束","回到工作");
+    pomo.mode = "work";
+  }
+  pomo.remain = pomoSecondsForMode(pomo.mode);
+  renderStats(); save();
+}
+function renderStats(){
+  if(state.pomo.lastDate !== todayKey()) state.pomo.today = 0;
+  $("statToday").textContent = state.pomo.today;
+  $("statTotal").textContent = state.pomo.total;
+  $("statMin").textContent = state.pomo.minutes;
+}
+$("pomoStart").addEventListener("click",()=>{
+  if(pomo.running) return;
+  if(pomo.remain<=0) pomo.remain=pomoSecondsForMode(pomo.mode);
+  pomo.running=true;
+  try{audioCtx ||= new (window.AudioContext||window.webkitAudioContext)(); audioCtx.resume();}catch(e){}
+  pomo.intv = setInterval(()=>{
+    pomo.remain -= 1;
+    if(pomo.remain<=0){ nextPhase(); }
+    renderPomo();
+  },1000);
+  renderPomo();
+});
+$("pomoPause").addEventListener("click",()=>{ pomo.running=false; clearInterval(pomo.intv); renderPomo(); });
+$("pomoReset").addEventListener("click",resetPomo);
+$("pomoSkip").addEventListener("click",()=>{ pomo.remain=1; });
+
+/* 通知權限 */
+function refreshPerm(){
+  const el = $("permStatus"); if(!el) return;
+  if(!("Notification" in window)){ el.textContent="不支援"; return; }
+  const p = Notification.permission;
+  if(p==="granted"){ el.textContent="✓ 已啟用"; el.style.color="var(--green)"; }
+  else if(p==="denied"){ el.textContent="已封鎖"; el.style.color="var(--red)"; }
+  else { el.textContent="點此啟用 ›"; el.style.color="var(--accent)"; }
+}
+$("permRow").addEventListener("click",async ()=>{
+  if(Notification.permission==="default"){
+    await Notification.requestPermission();
+    refreshPerm();
+  } else if(Notification.permission==="denied"){
+    alert("通知已被瀏覽器封鎖，請至瀏覽器設定 → 網站權限 → 通知 → 允許");
+  }
+});
+refreshPerm();
+
+/* 匯出 / 匯入 / 重置 */
+$("exportBtn").addEventListener("click",()=>{
+  const blob = new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url; a.download=`zaoke-backup-${todayKey()}.json`; a.click();
+  URL.revokeObjectURL(url);
+  toast("✓ 已下載備份檔");
+});
+$("importBtn").addEventListener("click",()=>$("importFile").click());
+$("importFile").addEventListener("change",e=>{
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{
+    try{
+      const data = JSON.parse(r.result);
+      if(confirm("確定覆蓋目前資料？")){
+        state = Object.assign(structuredClone(defaultState), data);
+        save(); renderTodos(); renderProjects(); renderStats(); resetPomo();
+        toast("✓ 匯入完成");
+      }
+    }catch(err){ alert("檔案格式錯誤"); }
+  };
+  r.readAsText(f);
+});
+$("reseedBtn").addEventListener("click",()=>{
+  if(confirm("這會清除目前所有案件並重新載入預設清單，確定嗎？")){
+    state.projects = SEED_PROJECTS.map(makeProject);
+    save(); renderProjects();
+    toast("✓ 已重置案件");
+  }
+});
+
+/* PWA Service Worker */
+if("serviceWorker" in navigator && location.protocol !== "file:"){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("sw.js").catch(()=>{});
+  });
+}
+
+renderTodos(); renderProjects(); renderStats(); resetPomo();
+let lastDay = todayKey();
+setInterval(()=>{
+  if(todayKey() !== lastDay){
+    lastDay = todayKey();
+    state.pomo.today = 0;
+    save(); renderTodos(); renderStats();
+  }
+},60000);
+</script>
+</body>
+</html>
