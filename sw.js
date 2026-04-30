@@ -1,7 +1,5 @@
-/* 早課 · Service Worker
-   提供離線使用：首次造訪後即使沒網路也能開啟
-*/
-const CACHE = "zaoke-v2";
+/* 早課 · Service Worker (v3 — 修正快取相容性) */
+const CACHE = "zaoke-v3";
 const FILES = [
   "./",
   "./index.html",
@@ -13,9 +11,7 @@ const FILES = [
 ];
 
 self.addEventListener("install", e => {
-  e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(FILES).catch(()=>{}))
-  );
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES).catch(()=>{})));
   self.skipWaiting();
 });
 
@@ -30,6 +26,10 @@ self.addEventListener("activate", e => {
 
 self.addEventListener("fetch", e => {
   if (e.request.method !== "GET") return;
+  // 只處理同源 http(s) 請求；不快取 chrome-extension、Google API、Firebase 等
+  const url = new URL(e.request.url);
+  if (url.origin !== location.origin) return;
+
   e.respondWith(
     fetch(e.request)
       .then(resp => {
