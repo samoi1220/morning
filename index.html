@@ -13,29 +13,20 @@
 <link rel="apple-touch-icon" href="icon-180.png" />
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
 <style>
-  /* ─── Design Tokens ─── */
   :root{
-    --bg:#F2F1ED;
-    --card:#FFFFFF;
-    --card-2:#FBFAF7;
-    --text:#1C1C1E;
-    --text-2:#6B6962;
-    --text-3:#A8A39B;
-    --sep:#E8E5DC;
-    --sep-soft:#F0EDE5;
-    --fill-1:#EFECE3;
-    --fill-2:#E4E0D5;
-    --accent:#C7553D;
-    --accent-soft:#F7E5DE;
-    --green:#5A8E6B;
-    --green-soft:#E1ECDF;
-    --orange:#C29442;
-    --orange-soft:#F4E7C8;
+    --bg:#F2F1ED; --card:#FFFFFF; --card-2:#FBFAF7;
+    --text:#1C1C1E; --text-2:#6B6962; --text-3:#A8A39B;
+    --sep:#E8E5DC; --sep-soft:#F0EDE5;
+    --fill-1:#EFECE3; --fill-2:#E4E0D5;
+    --accent:#C7553D; --accent-soft:#F7E5DE;
+    --green:#5A8E6B; --green-soft:#E1ECDF;
+    --orange:#C29442; --orange-soft:#F4E7C8;
     --red:#BF3D2A;
+    --pri-high:#BF3D2A; --pri-normal:#C29442; --pri-low:#A8A39B;
     --shadow-sm:0 1px 2px rgba(28,28,30,.04);
     --shadow-md:0 2px 8px rgba(28,28,30,.05),0 1px 2px rgba(28,28,30,.04);
     --shadow-lg:0 8px 24px rgba(28,28,30,.08);
-    --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:20px;
+    --r-sm:8px; --r-md:12px; --r-lg:16px;
     --tab-h:64px;
     --safe-bottom:env(safe-area-inset-bottom);
     --safe-top:env(safe-area-inset-top);
@@ -52,97 +43,79 @@
   ::selection{background:var(--accent-soft);color:var(--text)}
   button{font-family:inherit;cursor:pointer;border:none;background:transparent;color:inherit;-webkit-appearance:none}
   input,textarea,select{font-family:inherit;font-size:inherit;color:inherit;-webkit-appearance:none;border:none;outline:none;background:transparent}
-  input[type=date],input[type=time]{min-height:24px}
 
-  /* ─── 主框架 ─── */
-  .app{
-    min-height:100vh;min-height:100dvh;
-    display:flex;flex-direction:column;
-    max-width:880px;margin:0 auto;
-    padding-top:var(--safe-top);
-  }
-  .app-header{
-    padding:14px 20px 8px;
-    display:flex;align-items:flex-end;justify-content:space-between;
-  }
+  /* Frame */
+  .app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;max-width:880px;margin:0 auto;padding-top:var(--safe-top)}
+  .app-header{padding:14px 20px 8px;display:flex;align-items:flex-end;justify-content:space-between}
   .app-header h1{font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
-  .app-header h1 small{
-    font-size:11px;font-weight:500;color:var(--text-3);
-    letter-spacing:.18em;margin-left:8px;text-transform:uppercase;
-  }
+  .app-header h1 small{font-size:11px;font-weight:500;color:var(--text-3);letter-spacing:.18em;margin-left:8px;text-transform:uppercase}
   .app-header .meta{text-align:right;line-height:1.3}
-  .app-header .clock{
-    font-size:15px;font-weight:600;color:var(--text);
-    font-variant-numeric:tabular-nums;letter-spacing:-.01em;
-  }
+  .app-header .clock{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
   .app-header .date{font-size:12px;color:var(--text-2);font-weight:500}
+  .app-main{flex:1;padding:8px 16px calc(var(--tab-h) + var(--safe-bottom) + 24px);overflow-x:hidden}
 
-  .app-main{
-    flex:1;
-    padding:8px 16px calc(var(--tab-h) + var(--safe-bottom) + 24px);
-    overflow-x:hidden;
-  }
-
-  /* ─── Section / Card ─── */
+  /* Section / Card */
   .section{margin-bottom:22px}
-  .section-header{
-    display:flex;justify-content:space-between;align-items:flex-end;
-    padding:0 4px 8px;color:var(--text-2);
-  }
+  .section-header{display:flex;justify-content:space-between;align-items:flex-end;padding:0 4px 8px;color:var(--text-2)}
   .section-header .title{font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
-  .section-header .meta{
-    font-size:12px;font-weight:500;color:var(--text-3);
-    font-variant-numeric:tabular-nums;
-  }
+  .section-header .meta{font-size:12px;font-weight:500;color:var(--text-3);font-variant-numeric:tabular-nums}
   .card{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);overflow:hidden}
 
-  /* ─── Buttons ─── */
-  .btn{
-    display:inline-flex;align-items:center;justify-content:center;gap:6px;
-    height:36px;padding:0 16px;
-    background:var(--fill-1);color:var(--text);
-    font-size:14px;font-weight:500;border-radius:var(--r-md);
-    transition:transform .08s,background-color .15s;
-  }
+  /* Buttons */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;padding:0 16px;background:var(--fill-1);color:var(--text);font-size:14px;font-weight:500;border-radius:var(--r-md);transition:transform .08s,background-color .15s}
   .btn:active{transform:scale(.97);background:var(--fill-2)}
   .btn.primary{background:var(--accent);color:#fff}
   .btn.primary:active{background:#A84531}
   .btn.danger{color:var(--red);background:transparent}
   .btn.ghost{background:transparent;color:var(--text-2);height:32px;padding:0 10px;font-size:13px}
   .btn.ghost:active{background:var(--fill-1)}
-  .btn-icon{
-    width:36px;height:36px;padding:0;border-radius:var(--r-md);
-    background:var(--accent);color:#fff;font-size:20px;font-weight:300;
-    display:inline-flex;align-items:center;justify-content:center;
-    flex-shrink:0;
-  }
+  .btn-icon{width:36px;height:36px;padding:0;border-radius:var(--r-md);background:var(--accent);color:#fff;font-size:20px;font-weight:300;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
   .btn-icon:active{transform:scale(.95);background:#A84531}
 
-  /* ─── Todo ─── */
-  .todo-add{
-    display:flex;align-items:center;gap:8px;
-    padding:12px 14px;border-bottom:.5px solid var(--sep);
-  }
-  .todo-add .input-wrap{
-    flex:1;display:flex;align-items:center;gap:6px;
-    background:var(--fill-1);border-radius:var(--r-md);padding:9px 12px;
-  }
+  /* Todo */
+  .todo-add{display:flex;flex-direction:column;gap:8px;padding:12px 14px;border-bottom:.5px solid var(--sep)}
+  .todo-add-row{display:flex;align-items:center;gap:8px}
+  .todo-add .input-wrap{flex:1;display:flex;align-items:center;gap:6px;background:var(--fill-1);border-radius:var(--r-md);padding:9px 12px}
   .todo-add .input-wrap input{flex:1;font-size:15px}
   .todo-add .input-wrap input::placeholder{color:var(--text-3)}
-  .todo-add input[type=time]{
-    width:78px;font-size:13px;color:var(--accent);font-weight:600;
-    font-variant-numeric:tabular-nums;
-  }
+  .todo-add input[type=time]{width:78px;font-size:13px;color:var(--accent);font-weight:600;font-variant-numeric:tabular-nums}
   .todo-add input[type=time]::-webkit-datetime-edit{padding:0}
+  .todo-options{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .pri-pick{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-2);font-weight:500;letter-spacing:.04em}
+  .pri-pick .label{color:var(--text-3)}
+  .pri-btn{
+    display:inline-flex;align-items:center;gap:4px;
+    padding:4px 10px;border-radius:14px;
+    font-size:12px;font-weight:500;color:var(--text-2);
+    background:var(--fill-1);transition:all .15s;
+  }
+  .pri-btn .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+  .pri-btn[data-p="high"] .dot{background:var(--pri-high)}
+  .pri-btn[data-p="normal"] .dot{background:var(--pri-normal)}
+  .pri-btn[data-p="low"] .dot{background:var(--pri-low)}
+  .pri-btn.active{background:var(--text);color:#fff}
+  .dur-pick{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-2)}
+  .dur-pick .label{color:var(--text-3);font-size:11px;letter-spacing:.04em}
+  .dur-pick input{
+    width:42px;text-align:center;font-variant-numeric:tabular-nums;
+    background:var(--fill-1);border-radius:8px;padding:4px 4px;
+    font-size:12px;color:var(--text);font-weight:600;
+  }
 
   .todo-list{list-style:none}
   .todo-item{
-    display:flex;align-items:center;gap:12px;
+    display:flex;align-items:center;gap:10px;
     padding:13px 16px;border-bottom:.5px solid var(--sep-soft);
-    transition:background-color .15s;
+    transition:background-color .15s;position:relative;
   }
   .todo-item:last-child{border-bottom:none}
   .todo-item:active{background:var(--fill-1)}
+  .todo-item::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:transparent;
+  }
+  .todo-item.pri-high::before{background:var(--pri-high)}
+  .todo-item.pri-normal::before{background:transparent}
+  .todo-item.pri-low::before{background:transparent}
   .todo-check{
     appearance:none;width:22px;height:22px;flex-shrink:0;
     border:1.6px solid var(--text-3);border-radius:50%;
@@ -150,244 +123,162 @@
     transition:all .15s;
   }
   .todo-check:checked{background:var(--accent);border-color:var(--accent)}
-  .todo-check:checked::after{
-    content:"";position:absolute;left:6px;top:2px;
-    width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;
-    transform:rotate(45deg);
-  }
+  .todo-check:checked::after{content:"";position:absolute;left:6px;top:2px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
   .todo-text{flex:1;font-size:15px;line-height:1.4;word-break:break-word;min-width:0}
   .todo-item.done .todo-text{color:var(--text-3);text-decoration:line-through}
+  .todo-dur{
+    font-size:11px;color:var(--text-2);background:var(--fill-1);
+    padding:2px 7px;border-radius:8px;font-variant-numeric:tabular-nums;flex-shrink:0;font-weight:500;
+  }
   .todo-time{
     font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-soft);
     padding:3px 9px;border-radius:10px;font-variant-numeric:tabular-nums;flex-shrink:0;
   }
   .todo-time.fired{background:var(--accent);color:#fff;animation:pulse 1.5s infinite}
-  .todo-item.done .todo-time{color:var(--text-3);background:var(--fill-1)}
+  .todo-item.done .todo-time,.todo-item.done .todo-dur{color:var(--text-3);background:var(--fill-1)}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
-  .todo-del{
-    width:28px;height:28px;border-radius:50%;
-    color:var(--text-3);font-size:18px;line-height:1;opacity:0;transition:opacity .15s;
-  }
+  .todo-del{width:28px;height:28px;border-radius:50%;color:var(--text-3);font-size:18px;line-height:1;opacity:0;transition:opacity .15s}
   .todo-item:hover .todo-del{opacity:1}
   .todo-del:active{background:var(--fill-1);color:var(--red);opacity:1}
   .empty{text-align:center;padding:36px 16px;color:var(--text-3);font-size:14px}
 
-  /* ─── 番茄鐘 ─── */
+  /* Pomodoro */
   .pomo{padding:24px 16px 18px;text-align:center}
-  .pomo-time{
-    font-size:64px;font-weight:300;letter-spacing:-.04em;
-    font-variant-numeric:tabular-nums;color:var(--text);line-height:1;margin-bottom:6px;
-  }
-  .pomo-mode{
-    font-size:12px;letter-spacing:.16em;text-transform:uppercase;
-    color:var(--text-2);margin-bottom:18px;font-weight:600;
-  }
+  .pomo-time{font-size:64px;font-weight:300;letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1;margin-bottom:6px}
+  .pomo-mode{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-2);margin-bottom:18px;font-weight:600}
   .pomo-mode.work{color:var(--accent)}
   .pomo-mode.break{color:var(--green)}
   .pomo-controls{display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
-  .pomo-stats{
-    display:flex;justify-content:space-around;
-    padding:14px 8px 6px;border-top:.5px solid var(--sep);margin-top:8px;
-  }
+  .pomo-stats{display:flex;justify-content:space-around;padding:14px 8px 6px;border-top:.5px solid var(--sep);margin-top:8px}
   .pomo-stat{text-align:center}
-  .pomo-stat b{
-    display:block;font-size:22px;font-weight:600;color:var(--text);
-    font-variant-numeric:tabular-nums;line-height:1.2;
-  }
+  .pomo-stat b{display:block;font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.2}
   .pomo-stat span{font-size:11px;color:var(--text-2);font-weight:500}
-  .pomo-settings{
-    padding:14px 16px;border-top:.5px solid var(--sep);
-    display:grid;grid-template-columns:1fr 1fr;gap:12px;background:var(--card-2);
-  }
-  .pomo-settings label{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-2)}
-  .pomo-settings input{
-    width:54px;text-align:right;font-variant-numeric:tabular-nums;
-    color:var(--text);font-weight:600;background:var(--card);border-radius:6px;padding:4px 6px;
-  }
 
-  /* ─── Projects ─── */
-  .search{
-    background:var(--fill-1);border-radius:var(--r-md);
-    padding:8px 12px;margin-bottom:10px;display:flex;align-items:center;gap:6px;
+  /* Pomodoro history */
+  .pomo-history{border-top:.5px solid var(--sep);background:var(--card-2);padding:14px 16px}
+  .ph-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .ph-head .title{font-size:11px;font-weight:600;color:var(--text-2);letter-spacing:.06em;text-transform:uppercase}
+  .ph-head .meta{font-size:11px;color:var(--text-3);font-variant-numeric:tabular-nums}
+  .ph-today{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
+  .ph-chip{
+    font-size:11px;font-weight:600;color:var(--accent);background:var(--accent-soft);
+    padding:3px 8px;border-radius:8px;font-variant-numeric:tabular-nums;
+    display:inline-flex;align-items:center;gap:3px;
   }
+  .ph-chip-empty{font-size:12px;color:var(--text-3);font-style:italic}
+  .ph-week{display:flex;justify-content:space-between;align-items:flex-end;gap:4px;height:64px;margin-bottom:6px}
+  .ph-week-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:0}
+  .ph-week-bar{
+    width:100%;background:var(--accent-soft);border-radius:3px 3px 0 0;
+    min-height:2px;display:flex;align-items:flex-start;justify-content:center;
+    transition:height .25s;position:relative;
+  }
+  .ph-week-bar.today{background:var(--accent)}
+  .ph-week-bar .v{
+    position:absolute;top:-14px;font-size:10px;font-weight:600;color:var(--text-2);
+    font-variant-numeric:tabular-nums;
+  }
+  .ph-week-labels{display:flex;justify-content:space-between;gap:4px}
+  .ph-week-labels span{flex:1;text-align:center;font-size:10px;color:var(--text-3);font-weight:500}
+  .ph-week-labels span.today{color:var(--accent);font-weight:700}
+  .ph-summary{
+    margin-top:10px;padding-top:10px;border-top:.5px dashed var(--sep);
+    font-size:11px;color:var(--text-2);
+    display:flex;justify-content:space-around;
+    font-variant-numeric:tabular-nums;
+  }
+  .ph-summary b{color:var(--text);font-weight:600}
+
+  .pomo-settings{padding:14px 16px;border-top:.5px solid var(--sep);display:grid;grid-template-columns:1fr 1fr;gap:12px;background:var(--card-2)}
+  .pomo-settings label{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-2)}
+  .pomo-settings input{width:54px;text-align:right;font-variant-numeric:tabular-nums;color:var(--text);font-weight:600;background:var(--card);border-radius:6px;padding:4px 6px}
+
+  /* Projects */
+  .search{background:var(--fill-1);border-radius:var(--r-md);padding:8px 12px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
   .search svg{color:var(--text-3);flex-shrink:0}
   .search input{flex:1;font-size:15px}
   .search input::placeholder{color:var(--text-3)}
-
-  .segmented{
-    display:flex;background:var(--fill-1);border-radius:9px;padding:2px;gap:2px;margin-bottom:10px;
-  }
-  .segmented button{
-    flex:1;min-width:0;height:30px;font-size:12px;font-weight:500;color:var(--text);
-    border-radius:7px;transition:all .2s cubic-bezier(.4,0,.2,1);
-  }
+  .segmented{display:flex;background:var(--fill-1);border-radius:9px;padding:2px;gap:2px;margin-bottom:10px}
+  .segmented button{flex:1;min-width:0;height:30px;font-size:12px;font-weight:500;color:var(--text);border-radius:7px;transition:all .2s cubic-bezier(.4,0,.2,1)}
   .segmented button.active{background:var(--card);box-shadow:0 1px 2px rgba(0,0,0,.06);font-weight:600}
   .proj-add-btn{margin-bottom:14px;width:100%;height:42px}
 
-  /* 表單 */
-  .proj-form{
-    background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow-md);
-    margin-bottom:14px;overflow:hidden;animation:slideDown .25s ease-out;
-  }
+  .proj-form{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow-md);margin-bottom:14px;overflow:hidden;animation:slideDown .25s ease-out}
   @keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-  .proj-form-head{
-    display:flex;justify-content:space-between;align-items:center;
-    padding:12px 16px;border-bottom:.5px solid var(--sep);
-  }
+  .proj-form-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:.5px solid var(--sep)}
   .proj-form-head .title{font-size:15px;font-weight:600}
-  .proj-form-body{padding:0}
-  .field-group{
-    display:flex;align-items:center;gap:12px;
-    padding:11px 16px;border-bottom:.5px solid var(--sep-soft);
-  }
+  .field-group{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:.5px solid var(--sep-soft)}
   .field-group:last-child{border-bottom:none}
   .field-group .k{font-size:13px;color:var(--text-2);font-weight:500;min-width:48px;flex-shrink:0}
-  .field-group input,.field-group select{flex:1;font-size:15px;color:var(--text);text-align:right}
+  .field-group input,.field-group select{flex:1;font-size:15px;text-align:right}
   .field-group input::placeholder{color:var(--text-3)}
-  .field-row{
-    display:grid;grid-template-columns:1fr 1fr;gap:0;
-    border-bottom:.5px solid var(--sep-soft);
-  }
+  .field-row{display:grid;grid-template-columns:1fr 1fr;border-bottom:.5px solid var(--sep-soft)}
   .field-row .field-group{border-bottom:none;border-right:.5px solid var(--sep-soft)}
   .field-row .field-group:last-child{border-right:none}
 
   .pf-substages{border-top:6px solid var(--bg);background:var(--card)}
   .pf-substages-head{padding:12px 16px 8px}
-  .pf-substages-head .label{
-    font-size:11px;color:var(--text-2);letter-spacing:.06em;
-    text-transform:uppercase;font-weight:600;margin-bottom:8px;
-  }
+  .pf-substages-head .label{font-size:11px;color:var(--text-2);letter-spacing:.06em;text-transform:uppercase;font-weight:600;margin-bottom:8px}
   .pf-tabs{display:flex;background:var(--fill-1);border-radius:9px;padding:2px;gap:2px}
-  .pf-tabs button{
-    flex:1;height:30px;font-size:12px;font-weight:500;color:var(--text);
-    border-radius:7px;display:flex;align-items:center;justify-content:center;gap:4px;
-  }
+  .pf-tabs button{flex:1;height:30px;font-size:12px;font-weight:500;border-radius:7px;display:flex;align-items:center;justify-content:center;gap:4px}
   .pf-tabs button.active{background:var(--card);box-shadow:0 1px 2px rgba(0,0,0,.06);font-weight:600}
   .pf-tabs .frac{font-size:10px;color:var(--text-3);font-weight:500;font-variant-numeric:tabular-nums}
   .pf-tabs button.active .frac{color:var(--accent)}
-
   .pf-sub-list{padding:0 8px}
-  .pf-sub-item{
-    display:flex;align-items:center;gap:10px;
-    padding:8px;border-bottom:.5px solid var(--sep-soft);
-  }
+  .pf-sub-item{display:flex;align-items:center;gap:10px;padding:8px;border-bottom:.5px solid var(--sep-soft)}
   .pf-sub-item:last-child{border-bottom:none}
-  .pf-sub-item input[type=checkbox]{
-    appearance:none;width:20px;height:20px;flex-shrink:0;
-    border:1.6px solid var(--text-3);border-radius:50%;
-    background:var(--card);position:relative;cursor:pointer;
-  }
+  .pf-sub-item input[type=checkbox]{appearance:none;width:20px;height:20px;flex-shrink:0;border:1.6px solid var(--text-3);border-radius:50%;background:var(--card);position:relative;cursor:pointer}
   .pf-sub-item input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
-  .pf-sub-item input[type=checkbox]:checked::after{
-    content:"";position:absolute;left:5px;top:1px;
-    width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);
-  }
+  .pf-sub-item input[type=checkbox]:checked::after{content:"";position:absolute;left:5px;top:1px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
   .pf-sub-item input[type=text]{flex:1;font-size:14px;padding:4px 0;border-bottom:1px solid transparent}
   .pf-sub-item input[type=text]:focus{border-bottom-color:var(--accent-soft)}
   .pf-sub-item.done input[type=text]{color:var(--text-3);text-decoration:line-through}
   .pf-sub-item .del{width:24px;height:24px;border-radius:50%;color:var(--text-3);font-size:16px}
   .pf-sub-item .del:active{background:var(--fill-1);color:var(--red)}
   .pf-sub-empty{color:var(--text-3);font-size:13px;font-style:italic;padding:14px 8px;text-align:center}
-
-  .pf-sub-add{
-    display:flex;gap:8px;padding:10px 16px;
-    background:var(--card-2);border-top:.5px solid var(--sep);
-  }
+  .pf-sub-add{display:flex;gap:8px;padding:10px 16px;background:var(--card-2);border-top:.5px solid var(--sep)}
   .pf-sub-add input{flex:1;font-size:14px;background:var(--card);border-radius:8px;padding:7px 10px}
   .pf-sub-add button{height:30px;padding:0 12px;font-size:12px;background:var(--accent);color:#fff;border-radius:8px;font-weight:600}
-
-  .proj-form-actions{
-    display:flex;gap:8px;padding:12px 16px;background:var(--card-2);
-    border-top:.5px solid var(--sep);
-  }
+  .proj-form-actions{display:flex;gap:8px;padding:12px 16px;background:var(--card-2);border-top:.5px solid var(--sep)}
   .proj-form-actions .btn{flex:1}
 
-  /* 案件卡片 */
   .proj-list{display:flex;flex-direction:column;gap:10px}
-  .proj{
-    background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);
-    overflow:hidden;transition:box-shadow .15s,transform .08s;position:relative;
-  }
-  .proj.urgent::before,.proj.overdue::before{
-    content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);
-  }
+  .proj{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);overflow:hidden;transition:box-shadow .15s,transform .08s;position:relative}
+  .proj.urgent::before,.proj.overdue::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
   .proj.complete{opacity:.55}
-  .proj-row{
-    padding:12px 16px;cursor:pointer;
-    display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;
-    transition:background-color .15s;
-  }
+  .proj-row{padding:12px 16px;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;transition:background-color .15s}
   .proj-row:active{background:var(--fill-1)}
-  .proj-name{
-    font-size:15px;font-weight:600;letter-spacing:-.01em;
-    grid-column:1/-1;line-height:1.35;
-  }
-  .proj-tags{
-    display:flex;gap:6px;align-items:center;flex-wrap:wrap;
-    grid-column:1/2;font-size:12px;color:var(--text-2);
-  }
+  .proj-name{font-size:15px;font-weight:600;letter-spacing:-.01em;grid-column:1/-1;line-height:1.35}
+  .proj-tags{display:flex;gap:6px;align-items:center;flex-wrap:wrap;grid-column:1/2;font-size:12px;color:var(--text-2)}
   .proj-client{font-size:13px;color:var(--text-2)}
-  .proj-deadline{
-    font-size:12px;color:var(--text-2);font-weight:500;
-    font-variant-numeric:tabular-nums;
-    grid-column:2/3;text-align:right;white-space:nowrap;
-  }
+  .proj-deadline{font-size:12px;color:var(--text-2);font-weight:500;font-variant-numeric:tabular-nums;grid-column:2/3;text-align:right;white-space:nowrap}
   .proj-deadline.urgent{color:var(--accent);font-weight:600}
   .proj-deadline.overdue{color:var(--red);font-weight:700}
-  .pay{
-    display:inline-flex;align-items:center;
-    font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;
-  }
+  .pay{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px}
   .pay.unpaid{background:var(--fill-1);color:var(--text-2)}
   .pay.deposit{background:var(--orange-soft);color:var(--orange)}
   .pay.paid{background:var(--green-soft);color:var(--green)}
-
   .proj-body{display:none;border-top:.5px solid var(--sep);padding:14px 16px;background:var(--card-2)}
   .proj.open .proj-body{display:block}
   .proj-info{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;margin-bottom:14px;font-size:13px}
   .proj-info .row{display:flex;gap:8px}
   .proj-info .row .k{color:var(--text-3);min-width:36px;font-size:12px}
-  .proj-info .row .v{color:var(--text)}
-
   .stages{display:flex;background:var(--fill-1);border-radius:9px;padding:2px;gap:2px;margin-bottom:8px}
-  .stage{
-    flex:1;min-height:42px;border-radius:7px;
-    background:transparent;color:var(--text-2);
-    font-size:12px;font-weight:500;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:1px;cursor:pointer;transition:all .2s cubic-bezier(.4,0,.2,1);
-  }
+  .stage{flex:1;min-height:42px;border-radius:7px;background:transparent;color:var(--text-2);font-size:12px;font-weight:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer;transition:all .2s cubic-bezier(.4,0,.2,1)}
   .stage:active{transform:scale(.96)}
   .stage:hover{background:rgba(0,0,0,.03)}
   .stage.active{background:var(--text);color:#fff}
   .stage.done{background:var(--accent-soft);color:var(--accent)}
   .stage.expanded{background:var(--accent);color:#fff}
   .stage .frac{font-size:10px;font-weight:600;opacity:.85;font-variant-numeric:tabular-nums}
-
-  .substage{
-    background:var(--card);border-radius:var(--r-md);
-    padding:10px 4px 4px;margin-bottom:10px;box-shadow:var(--shadow-sm);
-  }
-  .substage h4{
-    font-size:11px;color:var(--text-2);letter-spacing:.06em;
-    text-transform:uppercase;font-weight:600;padding:0 12px 8px;
-  }
+  .substage{background:var(--card);border-radius:var(--r-md);padding:10px 4px 4px;margin-bottom:10px;box-shadow:var(--shadow-sm)}
+  .substage h4{font-size:11px;color:var(--text-2);letter-spacing:.06em;text-transform:uppercase;font-weight:600;padding:0 12px 8px}
   .substage ul{list-style:none}
-  .substage li{
-    display:flex;align-items:center;gap:10px;
-    padding:9px 12px;font-size:14px;border-bottom:.5px solid var(--sep-soft);
-  }
+  .substage li{display:flex;align-items:center;gap:10px;padding:9px 12px;font-size:14px;border-bottom:.5px solid var(--sep-soft)}
   .substage li:last-of-type{border-bottom:none}
-  .substage li input[type=checkbox]{
-    appearance:none;width:20px;height:20px;flex-shrink:0;
-    border:1.6px solid var(--text-3);border-radius:50%;
-    background:var(--card);position:relative;cursor:pointer;
-  }
+  .substage li input[type=checkbox]{appearance:none;width:20px;height:20px;flex-shrink:0;border:1.6px solid var(--text-3);border-radius:50%;background:var(--card);position:relative;cursor:pointer}
   .substage li input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
-  .substage li input[type=checkbox]:checked::after{
-    content:"";position:absolute;left:5px;top:1px;
-    width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);
-  }
+  .substage li input[type=checkbox]:checked::after{content:"";position:absolute;left:5px;top:1px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
   .substage li.done span{color:var(--text-3);text-decoration:line-through}
   .substage li span{flex:1;line-height:1.35;word-break:break-word;min-width:0}
   .substage li button{width:24px;height:24px;border-radius:50%;color:var(--text-3);font-size:14px;flex-shrink:0}
@@ -395,61 +286,34 @@
   .substage .add-sub{display:flex;gap:6px;padding:8px;border-top:.5px solid var(--sep-soft)}
   .substage .add-sub input{flex:1;font-size:13px;background:var(--fill-1);border-radius:8px;padding:6px 10px}
   .substage .add-sub button{height:28px;padding:0 12px;font-size:12px;font-weight:600;background:var(--accent);color:#fff;border-radius:8px}
-
   .proj-actions{display:flex;justify-content:space-between;gap:8px;margin-top:8px;flex-wrap:wrap}
   .proj-actions .left,.proj-actions .right{display:flex;gap:6px}
 
-  /* ─── More ─── */
+  /* More */
   .list-group{background:var(--card);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
-  .list-row{
-    display:flex;justify-content:space-between;align-items:center;
-    padding:13px 16px;font-size:15px;border-bottom:.5px solid var(--sep-soft);
-    transition:background-color .15s;cursor:pointer;
-  }
+  .list-row{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;font-size:15px;border-bottom:.5px solid var(--sep-soft);transition:background-color .15s;cursor:pointer}
   .list-row:last-child{border-bottom:none}
   .list-row:active{background:var(--fill-1)}
   .list-row .v{color:var(--text-2);font-size:13px;display:flex;align-items:center;gap:4px}
   .list-row .chevron{color:var(--text-3);font-size:14px}
   .list-row.danger{color:var(--red)}
 
-  /* ─── 底部分頁列 ─── */
-  .tab-bar{
-    position:fixed;left:0;right:0;bottom:0;
-    background:rgba(248,247,243,.85);
-    backdrop-filter:saturate(180%) blur(20px);
-    -webkit-backdrop-filter:saturate(180%) blur(20px);
-    border-top:.5px solid var(--sep);
-    padding:8px 0 var(--safe-bottom);
-    display:flex;justify-content:space-around;
-    z-index:50;max-width:880px;margin:0 auto;
-  }
-  .tab-bar button{
-    flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
-    padding:6px 8px;color:var(--text-3);transition:color .15s;
-  }
+  /* Tab Bar */
+  .tab-bar{position:fixed;left:0;right:0;bottom:0;background:rgba(248,247,243,.85);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-top:.5px solid var(--sep);padding:8px 0 var(--safe-bottom);display:flex;justify-content:space-around;z-index:50;max-width:880px;margin:0 auto}
+  .tab-bar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;color:var(--text-3);transition:color .15s}
   .tab-bar button.active{color:var(--accent)}
   .tab-bar button:active{transform:scale(.95)}
   .tab-bar svg{width:24px;height:24px;display:block}
   .tab-bar .label{font-size:10px;font-weight:600}
-
   .tab-content{display:none}
   .tab-content.active{display:block;animation:fadeIn .2s}
   @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 
-  /* ─── Toast ─── */
-  .toast{
-    position:fixed;left:50%;bottom:calc(var(--tab-h) + var(--safe-bottom) + 16px);
-    transform:translateX(-50%) translateY(20px);
-    background:rgba(28,28,30,.92);color:#fff;
-    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-    padding:10px 18px;font-size:13px;font-weight:500;
-    border-radius:24px;box-shadow:var(--shadow-lg);
-    opacity:0;transition:all .25s cubic-bezier(.4,0,.2,1);
-    pointer-events:none;max-width:90%;z-index:100;text-align:center;
-  }
+  /* Toast */
+  .toast{position:fixed;left:50%;bottom:calc(var(--tab-h) + var(--safe-bottom) + 16px);transform:translateX(-50%) translateY(20px);background:rgba(28,28,30,.92);color:#fff;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:10px 18px;font-size:13px;font-weight:500;border-radius:24px;box-shadow:var(--shadow-lg);opacity:0;transition:all .25s cubic-bezier(.4,0,.2,1);pointer-events:none;max-width:90%;z-index:100;text-align:center}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-  /* ─── Desktop ─── */
+  /* Desktop */
   @media(min-width:880px){
     body{padding:8px 0}
     .app{max-width:1100px;padding:0 24px}
@@ -473,7 +337,7 @@
     .proj-info{grid-template-columns:1fr}
   }
 
-  /* ─── Dark Mode ─── */
+  /* Dark Mode */
   @media(prefers-color-scheme:dark){
     :root{
       --bg:#000000;--card:#1C1C1E;--card-2:#2C2C2E;
@@ -483,6 +347,7 @@
       --accent:#FF6B47;--accent-soft:#3A2820;
       --green:#7DB389;--green-soft:#1F2F23;
       --orange:#E0B45F;--orange-soft:#332A18;--red:#FF6B5C;
+      --pri-high:#FF6B5C;--pri-normal:#E0B45F;--pri-low:#5C5A55;
       --shadow-sm:0 1px 2px rgba(0,0,0,.3);
       --shadow-md:0 2px 8px rgba(0,0,0,.4);
       --shadow-lg:0 8px 24px rgba(0,0,0,.5);
@@ -512,9 +377,24 @@
             <div class="section-header"><span class="title">今日待辦</span><span class="meta" id="todoCount">0 / 0</span></div>
             <div class="card">
               <div class="todo-add">
-                <div class="input-wrap"><input type="text" id="todoInput" placeholder="新增事項…" /></div>
-                <input type="time" id="todoTime" title="提醒時間" />
-                <button class="btn-icon" id="todoAdd" aria-label="新增">＋</button>
+                <div class="todo-add-row">
+                  <div class="input-wrap"><input type="text" id="todoInput" placeholder="新增事項…" /></div>
+                  <input type="time" id="todoTime" title="提醒時間" />
+                  <button class="btn-icon" id="todoAdd" aria-label="新增">＋</button>
+                </div>
+                <div class="todo-options">
+                  <div class="pri-pick" role="group">
+                    <span class="label">重要</span>
+                    <button type="button" class="pri-btn" data-p="low"><span class="dot"></span>低</button>
+                    <button type="button" class="pri-btn active" data-p="normal"><span class="dot"></span>中</button>
+                    <button type="button" class="pri-btn" data-p="high"><span class="dot"></span>高</button>
+                  </div>
+                  <div class="dur-pick">
+                    <span class="label">預估</span>
+                    <input type="number" id="todoDur" min="0" max="999" placeholder="—" />
+                    <span class="label">分</span>
+                  </div>
+                </div>
               </div>
               <ul class="todo-list" id="todoList"></ul>
             </div>
@@ -538,6 +418,24 @@
                   <div class="pomo-stat"><b id="statMin">0</b><span>專注分鐘</span></div>
                 </div>
               </div>
+
+              <div class="pomo-history">
+                <div class="ph-head">
+                  <span class="title">今日紀錄</span>
+                  <span class="meta" id="phTodayMeta">—</span>
+                </div>
+                <div class="ph-today" id="phToday"></div>
+
+                <div class="ph-head">
+                  <span class="title">本週概覽</span>
+                  <span class="meta" id="phWeekMeta">—</span>
+                </div>
+                <div class="ph-week" id="phWeek"></div>
+                <div class="ph-week-labels" id="phWeekLabels"></div>
+
+                <div class="ph-summary" id="phSummary"></div>
+              </div>
+
               <div class="pomo-settings">
                 <label>工作 <input type="number" id="setWork" min="1" max="120" value="25"> 分</label>
                 <label>短休 <input type="number" id="setBreak" min="1" max="60" value="5"> 分</label>
@@ -554,14 +452,10 @@
         <section class="tab-content" data-tab="projects">
           <div class="section">
             <div class="section-header"><span class="title">案件進度</span><span class="meta" id="projCount">0 件</span></div>
-
             <div class="search">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                <circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>
-              </svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
               <input type="text" id="projSearch" placeholder="搜尋案件、客戶、公司…" />
             </div>
-
             <div class="segmented" id="projFilters">
               <button data-f="all" class="active">全部</button>
               <button data-f="active">進行</button>
@@ -569,7 +463,6 @@
               <button data-f="overdue">逾期</button>
               <button data-f="done">完成</button>
             </div>
-
             <button class="btn primary proj-add-btn" id="projToggleForm">＋ 新增案件</button>
 
             <div class="proj-form" id="projForm" hidden>
@@ -577,24 +470,22 @@
                 <span class="title" id="pf_title">新增案件</span>
                 <button class="btn ghost" id="pf_cancel">取消</button>
               </div>
-              <div class="proj-form-body">
-                <div class="field-group"><span class="k">名稱</span><input type="text" id="pf_name" placeholder="案件名稱" /></div>
-                <div class="field-row">
-                  <div class="field-group"><span class="k">客戶</span><input type="text" id="pf_client" placeholder="窗口" /></div>
-                  <div class="field-group"><span class="k">公司</span><input type="text" id="pf_company" placeholder="公司" /></div>
-                </div>
-                <div class="field-row">
-                  <div class="field-group"><span class="k">開始</span><input type="date" id="pf_start" /></div>
-                  <div class="field-group"><span class="k">交稿</span><input type="date" id="pf_deadline" /></div>
-                </div>
-                <div class="field-group">
-                  <span class="k">付款</span>
-                  <select id="pf_payment">
-                    <option value="unpaid">未付款</option>
-                    <option value="deposit">訂金</option>
-                    <option value="paid">已付款</option>
-                  </select>
-                </div>
+              <div class="field-group"><span class="k">名稱</span><input type="text" id="pf_name" placeholder="案件名稱" /></div>
+              <div class="field-row">
+                <div class="field-group"><span class="k">客戶</span><input type="text" id="pf_client" placeholder="窗口" /></div>
+                <div class="field-group"><span class="k">公司</span><input type="text" id="pf_company" placeholder="公司" /></div>
+              </div>
+              <div class="field-row">
+                <div class="field-group"><span class="k">開始</span><input type="date" id="pf_start" /></div>
+                <div class="field-group"><span class="k">交稿</span><input type="date" id="pf_deadline" /></div>
+              </div>
+              <div class="field-group">
+                <span class="k">付款</span>
+                <select id="pf_payment">
+                  <option value="unpaid">未付款</option>
+                  <option value="deposit">訂金</option>
+                  <option value="paid">已付款</option>
+                </select>
               </div>
 
               <div class="pf-substages">
@@ -645,33 +536,25 @@
       <div class="section">
         <div class="section-header"><span class="title">關於</span></div>
         <div class="list-group">
-          <div class="list-row"><span>版本</span><span class="v">早課 1.0</span></div>
+          <div class="list-row"><span>版本</span><span class="v">早課 1.1</span></div>
           <div class="list-row"><span>儲存方式</span><span class="v">本地瀏覽器</span></div>
         </div>
       </div>
     </section>
+
   </main>
 
   <nav class="tab-bar">
     <button data-go="today" class="active">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="3.5"/>
-        <path d="M12 3v1.5M12 19.5V21M21 12h-1.5M4.5 12H3M18.36 5.64l-1.06 1.06M6.7 17.3l-1.06 1.06M18.36 18.36l-1.06-1.06M6.7 6.7L5.64 5.64"/>
-      </svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.5"/><path d="M12 3v1.5M12 19.5V21M21 12h-1.5M4.5 12H3M18.36 5.64l-1.06 1.06M6.7 17.3l-1.06 1.06M18.36 18.36l-1.06-1.06M6.7 6.7L5.64 5.64"/></svg>
       <span class="label">今日</span>
     </button>
     <button data-go="projects">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3.5" y="4.5" width="17" height="4" rx="1"/>
-        <rect x="3.5" y="10.5" width="17" height="4" rx="1"/>
-        <rect x="3.5" y="16.5" width="11" height="3" rx="1"/>
-      </svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="4" rx="1"/><rect x="3.5" y="10.5" width="17" height="4" rx="1"/><rect x="3.5" y="16.5" width="11" height="3" rx="1"/></svg>
       <span class="label">案件</span>
     </button>
     <button data-go="more">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/>
-      </svg>
+      <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/></svg>
       <span class="label">更多</span>
     </button>
   </nav>
@@ -709,9 +592,9 @@ const SEED_PROJECTS = [
 ];
 const defaultState = {
   todos: [], projects: [],
-  pomo: {today:0, total:0, minutes:0, lastDate:""},
+  pomo: {today:0, total:0, minutes:0, lastDate:"", history:[]},
   settings: {work:25, brk:5, long:15, cycle:4},
-  ui: {tab:"today", filter:"all", search:""}
+  ui: {tab:"today", filter:"all", search:"", priority:"normal"}
 };
 
 const $ = id => document.getElementById(id);
@@ -721,23 +604,26 @@ const todayKey = () => {
   return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 };
 function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-
 function makeProject(p){
   const subtasks = {};
   for(let i=0;i<STAGES.length;i++){
     subtasks[i] = DEFAULT_SUBTASKS[i].map(t=>({id:uid(),text:t,done:false}));
   }
-  return {
-    id: uid(), name:p.name||"", client:p.client||"", company:p.company||"",
-    startDate:p.startDate||"", deadline:p.deadline||"",
-    payment:p.payment||"unpaid",
-    stage:0, subtasks, expandedStage:null, open:false, notes:""
-  };
+  return {id:uid(), name:p.name||"", client:p.client||"", company:p.company||"", startDate:p.startDate||"", deadline:p.deadline||"", payment:p.payment||"unpaid", stage:0, subtasks, expandedStage:null, open:false, notes:""};
 }
 function load(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
-    if(raw) return Object.assign(structuredClone(defaultState), JSON.parse(raw));
+    if(raw){
+      const s = Object.assign(structuredClone(defaultState), JSON.parse(raw));
+      // 遷移
+      s.pomo.history = s.pomo.history || [];
+      s.todos.forEach(t=>{
+        if(!t.priority) t.priority="normal";
+        if(t.duration===undefined) t.duration=null;
+      });
+      return s;
+    }
   }catch(e){}
   let s = structuredClone(defaultState);
   s.projects = SEED_PROJECTS.map(makeProject);
@@ -781,12 +667,8 @@ setInterval(tick,1000); tick();
 
 function switchTab(name){
   state.ui.tab = name;
-  document.querySelectorAll(".tab-content").forEach(s=>{
-    s.classList.toggle("active", s.dataset.tab===name);
-  });
-  document.querySelectorAll(".tab-bar button").forEach(b=>{
-    b.classList.toggle("active", b.dataset.go===name);
-  });
+  document.querySelectorAll(".tab-content").forEach(s=>s.classList.toggle("active", s.dataset.tab===name));
+  document.querySelectorAll(".tab-bar button").forEach(b=>b.classList.toggle("active", b.dataset.go===name));
   window.scrollTo({top:0});
   save();
 }
@@ -796,7 +678,23 @@ document.querySelector(".tab-bar").addEventListener("click", e=>{
 });
 switchTab(state.ui.tab||"today");
 
-/* ── 待辦 ── */
+/* ── Todo ── */
+const PRI_LABEL = {high:"高", normal:"中", low:"低"};
+const PRI_RANK = {high:0, normal:1, low:2};
+
+function renderPriBtns(){
+  document.querySelectorAll(".pri-btn").forEach(b=>{
+    b.classList.toggle("active", b.dataset.p===state.ui.priority);
+  });
+}
+renderPriBtns();
+document.querySelectorAll(".pri-btn").forEach(b=>{
+  b.addEventListener("click",()=>{
+    state.ui.priority = b.dataset.p;
+    renderPriBtns();
+  });
+});
+
 function renderTodos(){
   const ul = $("todoList"); ul.innerHTML="";
   const today = todayKey();
@@ -806,16 +704,21 @@ function renderTodos(){
   } else {
     list.sort((a,b)=>{
       if(a.done !== b.done) return a.done?1:-1;
+      const pa = PRI_RANK[a.priority||"normal"], pb = PRI_RANK[b.priority||"normal"];
+      if(pa !== pb) return pa - pb;
       if(a.time && b.time) return a.time.localeCompare(b.time);
       if(a.time) return -1; if(b.time) return 1; return 0;
     });
     list.forEach(t=>{
       const li=document.createElement("li");
-      li.className="todo-item"+(t.done?" done":"");
+      const pri = t.priority||"normal";
+      li.className=`todo-item pri-${pri}`+(t.done?" done":"");
+      const dur = t.duration ? `<span class="todo-dur">${t.duration} 分</span>` : "";
+      const time = t.time ? `<span class="todo-time ${t.fired?"fired":""}">${escapeHtml(t.time)}</span>` : "";
       li.innerHTML=`
         <input type="checkbox" class="todo-check" ${t.done?"checked":""} data-id="${t.id}">
         <span class="todo-text">${escapeHtml(t.text)}</span>
-        ${t.time?`<span class="todo-time ${t.fired?"fired":""}">${escapeHtml(t.time)}</span>`:""}
+        ${dur}${time}
         <button class="todo-del" data-del="${t.id}" aria-label="刪除">×</button>
       `;
       ul.appendChild(li);
@@ -825,15 +728,19 @@ function renderTodos(){
   $("todoCount").textContent = `${done} / ${list.length}`;
   save();
 }
+
 $("todoAdd").addEventListener("click",addTodo);
 $("todoInput").addEventListener("keydown",e=>{if(e.key==="Enter")addTodo()});
 $("todoTime").addEventListener("keydown",e=>{if(e.key==="Enter")addTodo()});
+$("todoDur").addEventListener("keydown",e=>{if(e.key==="Enter")addTodo()});
 function addTodo(){
   const text = $("todoInput").value.trim();
   if(!text){ $("todoInput").focus(); return; }
   const time = $("todoTime").value;
-  state.todos.push({id:uid(), text, time, done:false, fired:false, dateKey:todayKey()});
-  $("todoInput").value=""; $("todoTime").value="";
+  const durRaw = $("todoDur").value.trim();
+  const duration = durRaw ? Math.max(0, parseInt(durRaw,10)||0) : null;
+  state.todos.push({id:uid(), text, time, duration, priority:state.ui.priority||"normal", done:false, fired:false, dateKey:todayKey()});
+  $("todoInput").value=""; $("todoTime").value=""; $("todoDur").value="";
   renderTodos();
 }
 $("todoList").addEventListener("click",e=>{
@@ -860,7 +767,7 @@ setInterval(()=>{
   if(changed) renderTodos();
 },20000);
 
-/* ── 案件 ── */
+/* ── Projects ── */
 function deadlineLabel(dateStr){
   if(!dateStr) return null;
   const d = new Date(dateStr+"T23:59:59");
@@ -901,7 +808,6 @@ function renderProjects(){
     if(!bd) return -1;
     return bd.localeCompare(ad);
   });
-
   let count=0;
   sorted.forEach(p=>{
     const status = projectStatus(p);
@@ -921,57 +827,25 @@ function renderProjects(){
     const clientLine = (p.client||p.company)
       ? `<span class="proj-client">${escapeHtml([p.client, p.company].filter(Boolean).join(" / "))}</span>`
       : "";
-
     const div = document.createElement("div");
-    div.className = "proj"
-      + (status==="urgent"?" urgent":"")
-      + (status==="overdue"?" overdue":"")
-      + (status==="done"?" complete":"")
-      + (p.open?" open":"");
+    div.className = "proj"+(status==="urgent"?" urgent":"")+(status==="overdue"?" overdue":"")+(status==="done"?" complete":"")+(p.open?" open":"");
     div.dataset.id = p.id;
-
     const stagesHtml = STAGES.map((s,i)=>{
       const frac = stageDoneCount(p,i);
       const fracStr = frac ? `${frac.done}/${frac.total}` : "";
-      const cls = (p.expandedStage===i?" expanded":"")
-                + (p.stage>i?" done":(p.stage===i?" active":""));
-      return `<button class="stage${cls}" data-stage="${i}" type="button">
-        <span>${escapeHtml(s)}</span>
-        ${fracStr?`<span class="frac">${fracStr}</span>`:""}
-      </button>`;
+      const cls = (p.expandedStage===i?" expanded":"")+(p.stage>i?" done":(p.stage===i?" active":""));
+      return `<button class="stage${cls}" data-stage="${i}" type="button"><span>${escapeHtml(s)}</span>${fracStr?`<span class="frac">${fracStr}</span>`:""}</button>`;
     }).join("");
-
     let subHtml = "";
     if(p.expandedStage!==null && p.expandedStage!==undefined){
       const idx = p.expandedStage;
       const subs = p.subtasks[idx]||[];
-      subHtml = `
-        <div class="substage">
-          <h4>${escapeHtml(STAGES[idx])} · 細項</h4>
-          <ul>
-            ${subs.length===0?'<li style="color:var(--text-3);font-style:italic">尚無細項</li>':""}
-            ${subs.map(s=>`
-              <li class="${s.done?"done":""}">
-                <input type="checkbox" data-sub="${s.id}" data-stage="${idx}" ${s.done?"checked":""}>
-                <span>${escapeHtml(s.text)}</span>
-                <button data-subdel="${s.id}" data-stage="${idx}" type="button">×</button>
-              </li>`).join("")}
-          </ul>
-          <div class="add-sub">
-            <input type="text" placeholder="新增細項…" data-subadd="${idx}" />
-            <button data-subaddbtn="${idx}" type="button">加入</button>
-          </div>
-        </div>
-      `;
+      subHtml = `<div class="substage"><h4>${escapeHtml(STAGES[idx])} · 細項</h4><ul>${subs.length===0?'<li style="color:var(--text-3);font-style:italic">尚無細項</li>':""}${subs.map(s=>`<li class="${s.done?"done":""}"><input type="checkbox" data-sub="${s.id}" data-stage="${idx}" ${s.done?"checked":""}><span>${escapeHtml(s.text)}</span><button data-subdel="${s.id}" data-stage="${idx}" type="button">×</button></li>`).join("")}</ul><div class="add-sub"><input type="text" placeholder="新增細項…" data-subadd="${idx}" /><button data-subaddbtn="${idx}" type="button">加入</button></div></div>`;
     }
-
     div.innerHTML = `
       <div class="proj-row" data-toggle="${p.id}">
         <span class="proj-name">${escapeHtml(p.name)}</span>
-        <div class="proj-tags">
-          ${clientLine}
-          <span class="pay ${p.payment}" data-pay="${p.id}">${PAY_LABEL[p.payment]||"未付款"}</span>
-        </div>
+        <div class="proj-tags">${clientLine}<span class="pay ${p.payment}" data-pay="${p.id}">${PAY_LABEL[p.payment]||"未付款"}</span></div>
         ${dlHtml}
       </div>
       <div class="proj-body">
@@ -991,14 +865,10 @@ function renderProjects(){
             <button class="btn danger" data-pdel="${p.id}">刪除</button>
           </div>
         </div>
-      </div>
-    `;
+      </div>`;
     wrap.appendChild(div);
   });
-
-  if(count===0){
-    wrap.innerHTML = `<div class="empty">沒有符合條件的案件</div>`;
-  }
+  if(count===0) wrap.innerHTML = `<div class="empty">沒有符合條件的案件</div>`;
   $("projCount").textContent = `${count} / ${state.projects.length} 件`;
   save();
 }
@@ -1021,10 +891,7 @@ $("projList").addEventListener("click", e=>{
     const idx = +stageEl.dataset.stage;
     const projEl = stageEl.closest(".proj");
     const p = state.projects.find(x=>x.id===projEl.dataset.id);
-    if(p){
-      p.expandedStage = (p.expandedStage===idx) ? null : idx;
-      renderProjects();
-    }
+    if(p){ p.expandedStage = (p.expandedStage===idx) ? null : idx; renderProjects(); }
     return;
   }
   if(t.matches("[data-sub]")){
@@ -1065,15 +932,13 @@ $("projList").addEventListener("click", e=>{
   if(t.matches("[data-stageprev]")){
     const p = state.projects.find(x=>x.id===t.dataset.stageprev);
     if(p && p.stage>0) p.stage--;
-    renderProjects();
-    return;
+    renderProjects(); return;
   }
   if(t.matches("[data-stagenext]")){
     const p = state.projects.find(x=>x.id===t.dataset.stagenext);
     if(p && p.stage<STAGES.length) p.stage++;
     if(p && p.stage===STAGES.length) toast(`✓ ${p.name} 全數完成`);
-    renderProjects();
-    return;
+    renderProjects(); return;
   }
   if(t.matches("[data-edit]")){ openProjForm(t.dataset.edit); return; }
   if(t.matches("[data-pdel]")){
@@ -1093,24 +958,17 @@ $("projList").addEventListener("keydown", e=>{
   }
 });
 
-/* 表單 */
 let editingId=null, editingSubtasks=null, editingTab=0;
-function closeProjForm(){
-  $("projForm").hidden = true;
-  editingId=null; editingSubtasks=null;
-}
+function closeProjForm(){ $("projForm").hidden = true; editingId=null; editingSubtasks=null; }
 $("projToggleForm").addEventListener("click",()=>{
   if(!$("projForm").hidden) closeProjForm();
   else openProjForm(null);
 });
 $("pf_cancel").addEventListener("click", closeProjForm);
 $("pf_cancel2").addEventListener("click", closeProjForm);
-
 function defaultSubtasksObject(){
   const o = {};
-  for(let i=0;i<STAGES.length;i++){
-    o[i] = DEFAULT_SUBTASKS[i].map(t=>({id:uid(),text:t,done:false}));
-  }
+  for(let i=0;i<STAGES.length;i++) o[i] = DEFAULT_SUBTASKS[i].map(t=>({id:uid(),text:t,done:false}));
   return o;
 }
 function openProjForm(id){
@@ -1136,9 +994,7 @@ function openProjForm(id){
     $("pf_title").textContent = "新增案件";
   }
   editingTab = 0;
-  document.querySelectorAll("#pf_tabs button").forEach(b=>{
-    b.classList.toggle("active", +b.dataset.pftab===0);
-  });
+  document.querySelectorAll("#pf_tabs button").forEach(b=>b.classList.toggle("active", +b.dataset.pftab===0));
   renderEditSubtasks();
   $("projForm").hidden = false;
   $("projForm").scrollIntoView({behavior:"smooth", block:"start"});
@@ -1159,17 +1015,8 @@ function syncSubtasksFromForm(){
 function renderEditSubtasks(){
   const arr = editingSubtasks[editingTab]||[];
   const wrap = $("pf_subList");
-  if(arr.length===0){
-    wrap.innerHTML = `<div class="pf-sub-empty">此階段尚無細項</div>`;
-  } else {
-    wrap.innerHTML = arr.map(s=>`
-      <div class="pf-sub-item ${s.done?"done":""}" data-sid="${s.id}">
-        <input type="checkbox" ${s.done?"checked":""}>
-        <input type="text" value="${escapeHtml(s.text)}" placeholder="細項…" />
-        <button type="button" class="del" data-pfsubdel="${s.id}" aria-label="刪除">×</button>
-      </div>
-    `).join("");
-  }
+  if(arr.length===0) wrap.innerHTML = `<div class="pf-sub-empty">此階段尚無細項</div>`;
+  else wrap.innerHTML = arr.map(s=>`<div class="pf-sub-item ${s.done?"done":""}" data-sid="${s.id}"><input type="checkbox" ${s.done?"checked":""}><input type="text" value="${escapeHtml(s.text)}" placeholder="細項…" /><button type="button" class="del" data-pfsubdel="${s.id}" aria-label="刪除">×</button></div>`).join("");
   document.querySelectorAll("#pf_tabs button").forEach(b=>{
     const idx = +b.dataset.pftab;
     const a = editingSubtasks[idx]||[];
@@ -1184,9 +1031,7 @@ $("pf_tabs").addEventListener("click", e=>{
   if(!btn) return;
   syncSubtasksFromForm();
   editingTab = +btn.dataset.pftab;
-  document.querySelectorAll("#pf_tabs button").forEach(b=>{
-    b.classList.toggle("active", +b.dataset.pftab===editingTab);
-  });
+  document.querySelectorAll("#pf_tabs button").forEach(b=>b.classList.toggle("active", +b.dataset.pftab===editingTab));
   renderEditSubtasks();
 });
 $("pf_subAddBtn").addEventListener("click", addEditSub);
@@ -1217,12 +1062,8 @@ $("pf_save").addEventListener("click",()=>{
   if(!name){ alert("請輸入案件名稱"); $("pf_name").focus(); return; }
   syncSubtasksFromForm();
   const data = {
-    name,
-    client: $("pf_client").value.trim(),
-    company: $("pf_company").value.trim(),
-    startDate: $("pf_start").value,
-    deadline: $("pf_deadline").value,
-    payment: $("pf_payment").value
+    name, client: $("pf_client").value.trim(), company: $("pf_company").value.trim(),
+    startDate: $("pf_start").value, deadline: $("pf_deadline").value, payment: $("pf_payment").value
   };
   if(editingId){
     const p = state.projects.find(x=>x.id===editingId);
@@ -1242,7 +1083,6 @@ $("pf_save").addEventListener("click",()=>{
   closeProjForm();
   renderProjects();
 });
-
 $("projFilters").addEventListener("click", e=>{
   if(e.target.matches("button")){
     state.ui.filter = e.target.dataset.f;
@@ -1256,7 +1096,7 @@ $("projSearch").addEventListener("input", e=>{
   renderProjects();
 });
 
-/* 番茄鐘 */
+/* ── 番茄鐘 ── */
 const pomo = { running:false, mode:"work", remain:0, cycle:0, intv:null };
 function applySettings(){
   $("setWork").value = state.settings.work;
@@ -1275,9 +1115,7 @@ applySettings();
     if(!pomo.running) resetPomo();
   });
 });
-function pomoSecondsForMode(m){
-  return ({work:state.settings.work, brk:state.settings.brk, long:state.settings.long}[m])*60;
-}
+function pomoSecondsForMode(m){return ({work:state.settings.work, brk:state.settings.brk, long:state.settings.long}[m])*60}
 function renderPomo(){
   const m = Math.floor(pomo.remain/60), s = pomo.remain%60;
   $("pomoTime").textContent = String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
@@ -1298,6 +1136,13 @@ function nextPhase(){
     state.pomo.lastDate = todayKey();
     state.pomo.total += 1;
     state.pomo.minutes += state.settings.work;
+    state.pomo.history.push({
+      id: uid(),
+      ts: new Date().toISOString(),
+      duration: state.settings.work,
+      mode: "work"
+    });
+    if(state.pomo.history.length > 1000) state.pomo.history = state.pomo.history.slice(-1000);
     notify("🍅 番茄完成","起來活動一下");
     pomo.cycle += 1;
     pomo.mode = (pomo.cycle % state.settings.cycle === 0) ? "long" : "brk";
@@ -1306,7 +1151,7 @@ function nextPhase(){
     pomo.mode = "work";
   }
   pomo.remain = pomoSecondsForMode(pomo.mode);
-  renderStats(); save();
+  renderStats(); renderHistory(); save();
 }
 function renderStats(){
   if(state.pomo.lastDate !== todayKey()) state.pomo.today = 0;
@@ -1314,6 +1159,75 @@ function renderStats(){
   $("statTotal").textContent = state.pomo.total;
   $("statMin").textContent = state.pomo.minutes;
 }
+
+function renderHistory(){
+  const hist = state.pomo.history || [];
+  const today = todayKey();
+
+  // 今日 sessions
+  const todays = hist.filter(h => h.ts.slice(0,10)===today)
+                     .sort((a,b)=>a.ts.localeCompare(b.ts));
+  const phToday = $("phToday");
+  if(todays.length===0){
+    phToday.innerHTML = `<span class="ph-chip-empty">尚無紀錄</span>`;
+  } else {
+    phToday.innerHTML = todays.map(h=>{
+      const d = new Date(h.ts);
+      const hh = String(d.getHours()).padStart(2,"0");
+      const mm = String(d.getMinutes()).padStart(2,"0");
+      return `<span class="ph-chip">${hh}:${mm} · ${h.duration}m</span>`;
+    }).join("");
+  }
+  const todayMin = todays.reduce((s,h)=>s+h.duration, 0);
+  $("phTodayMeta").textContent = todays.length>0 ? `${todays.length} 顆 · ${todayMin} 分` : "—";
+
+  // 本週 7 天 (週日為一週開始)
+  const now = new Date();
+  const wkDay = now.getDay(); // 0=Sun ... 6=Sat
+  const sunday = new Date(now); sunday.setHours(0,0,0,0); sunday.setDate(sunday.getDate()-wkDay);
+
+  const days = [];
+  for(let i=0;i<7;i++){
+    const d = new Date(sunday); d.setDate(sunday.getDate()+i);
+    const key = d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+    const sessions = hist.filter(h => h.ts.slice(0,10)===key);
+    days.push({key, count: sessions.length, min: sessions.reduce((s,h)=>s+h.duration,0), date: d});
+  }
+  const maxC = Math.max(1, ...days.map(d=>d.count));
+  const wkLabels = ["日","一","二","三","四","五","六"];
+  const phWeek = $("phWeek");
+  phWeek.innerHTML = days.map((d,i)=>{
+    const h = d.count>0 ? Math.max(8, Math.round((d.count/maxC)*100)) : 2;
+    const isToday = d.key===today;
+    return `<div class="ph-week-col">
+      <div class="ph-week-bar ${isToday?"today":""}" style="height:${h}%">
+        ${d.count>0?`<span class="v">${d.count}</span>`:""}
+      </div>
+    </div>`;
+  }).join("");
+  $("phWeekLabels").innerHTML = days.map((d,i)=>{
+    const isToday = d.key===today;
+    return `<span class="${isToday?"today":""}">${wkLabels[i]}</span>`;
+  }).join("");
+
+  const wkTotal = days.reduce((s,d)=>s+d.count, 0);
+  const wkMin = days.reduce((s,d)=>s+d.min, 0);
+  $("phWeekMeta").textContent = wkTotal>0 ? `${wkTotal} 顆 · ${wkMin} 分` : "—";
+
+  // 摘要
+  const allTotal = hist.length;
+  const allMin = hist.reduce((s,h)=>s+h.duration, 0);
+  // 本月
+  const monKey = today.slice(0,7);
+  const monthSessions = hist.filter(h => h.ts.slice(0,7)===monKey);
+  const monthCount = monthSessions.length;
+  const monthMin = monthSessions.reduce((s,h)=>s+h.duration, 0);
+  $("phSummary").innerHTML = `
+    <div>本月 <b>${monthCount}</b> 顆 / <b>${monthMin}</b> 分</div>
+    <div>累計 <b>${allTotal}</b> 顆 / <b>${allMin}</b> 分</div>
+  `;
+}
+
 $("pomoStart").addEventListener("click",()=>{
   if(pomo.running) return;
   if(pomo.remain<=0) pomo.remain=pomoSecondsForMode(pomo.mode);
@@ -1367,7 +1281,7 @@ $("importFile").addEventListener("change",e=>{
       const data = JSON.parse(r.result);
       if(confirm("確定覆蓋目前資料？")){
         state = Object.assign(structuredClone(defaultState), data);
-        save(); renderTodos(); renderProjects(); renderStats(); resetPomo();
+        save(); renderTodos(); renderProjects(); renderStats(); renderHistory(); resetPomo();
         toast("✓ 匯入完成");
       }
     }catch(err){ alert("檔案格式錯誤"); }
@@ -1382,20 +1296,20 @@ $("reseedBtn").addEventListener("click",()=>{
   }
 });
 
-/* PWA Service Worker */
+/* PWA */
 if("serviceWorker" in navigator && location.protocol !== "file:"){
   window.addEventListener("load",()=>{
     navigator.serviceWorker.register("sw.js").catch(()=>{});
   });
 }
 
-renderTodos(); renderProjects(); renderStats(); resetPomo();
+renderTodos(); renderProjects(); renderStats(); renderHistory(); resetPomo();
 let lastDay = todayKey();
 setInterval(()=>{
   if(todayKey() !== lastDay){
     lastDay = todayKey();
     state.pomo.today = 0;
-    save(); renderTodos(); renderStats();
+    save(); renderTodos(); renderStats(); renderHistory();
   }
 },60000);
 </script>
