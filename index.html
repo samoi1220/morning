@@ -734,13 +734,9 @@ async function startGoogleSignIn(){
   try{
     if(!firebase.apps.length) firebase.initializeApp(syncConfig);
     const provider = new firebase.auth.GoogleAuthProvider();
-    // 優先用 popup，失敗（行動裝置常擋）改用 redirect
-    try{
-      await firebase.auth().signInWithPopup(provider);
-    }catch(popupErr){
-      console.warn("Popup blocked, fallback to redirect:", popupErr);
-      await firebase.auth().signInWithRedirect(provider);
-    }
+    provider.setCustomParameters({prompt: "select_account"});
+    toast("即將轉跳 Google 登入頁…");
+    await firebase.auth().signInWithRedirect(provider);
   }catch(e){
     console.error(e);
     alert("Google 登入失敗：" + (e.message || e.code));
