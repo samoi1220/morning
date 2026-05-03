@@ -103,7 +103,10 @@
   .todo-item:active{background:var(--fill-1)}
   .todo-item::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:transparent}
   .todo-item.pri-high::before{background:var(--pri-high)}
-  .todo-check{appearance:none;width:22px;height:22px;flex-shrink:0;border:1.6px solid var(--text-3);border-radius:50%;background:var(--card);position:relative;cursor:pointer;transition:all .15s}
+  .todo-item.pri-normal::before{background:var(--pri-normal)}
+  .todo-item.pri-low::before{background:var(--pri-low)}
+  .todo-item.done::before{opacity:.4}
+  .todo-check{appearance:none;width:22px;height:22px;flex-shrink:0;flex-grow:0;border:1.6px solid var(--text-3);border-radius:50%;background:var(--card);position:relative;cursor:pointer;transition:all .15s}
   .todo-check:checked{background:var(--accent);border-color:var(--accent)}
   .todo-check:checked::after{content:"";position:absolute;left:6px;top:2px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
   .todo-text{flex:1;font-size:15px;line-height:1.4;word-break:break-word;min-width:0}
@@ -113,10 +116,16 @@
   .todo-time.fired{background:var(--accent);color:#fff;animation:pulse 1.5s infinite}
   .todo-item.done .todo-time,.todo-item.done .todo-dur{color:var(--text-3);background:var(--fill-1)}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
-  .todo-del{width:28px;height:28px;border-radius:50%;color:var(--text-3);font-size:18px;line-height:1;opacity:0;transition:opacity .15s}
+  .todo-del{width:28px;height:28px;flex-shrink:0;border-radius:50%;color:var(--text-3);font-size:18px;line-height:1;opacity:0;transition:opacity .15s}
   .todo-item:hover .todo-del{opacity:1}
   .todo-del:active{background:var(--fill-1);color:var(--red);opacity:1}
-  @media(max-width:600px){.todo-del{opacity:.6}}
+  @media(max-width:600px){
+    .todo-del{opacity:.6}
+    .todo-item{flex-wrap:wrap;row-gap:6px}
+    .todo-text{flex:1 0 calc(100% - 70px);min-width:0}
+    .todo-dur,.todo-time{margin-left:auto}
+    .todo-time{margin-left:6px}
+  }
   .empty{text-align:center;padding:36px 16px;color:var(--text-3);font-size:14px}
 
   /* Pomodoro */
@@ -153,14 +162,14 @@
   .ph-week-wrap::-webkit-scrollbar{height:4px}
   .ph-week-wrap::-webkit-scrollbar-thumb{background:var(--sep);border-radius:2px}
   .ph-week-inner{display:flex;flex-direction:column;min-width:100%;width:max-content;padding-bottom:6px}
-  .ph-week{display:flex;align-items:flex-end;gap:4px;height:64px;margin-bottom:6px;min-width:100%}
-  .ph-week-col{width:28px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;flex-shrink:0;cursor:pointer}
+  .ph-week{display:flex;align-items:flex-end;gap:6px;height:72px;margin-bottom:6px;min-width:100%}
+  .ph-week-col{width:44px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;flex-shrink:0;cursor:pointer}
   .ph-week-bar{width:100%;background:var(--accent-soft);border-radius:3px 3px 0 0;min-height:2px;transition:height .25s,opacity .15s;position:relative}
   .ph-week-bar.today{background:var(--accent)}
   .ph-week-bar.selected{outline:2px solid var(--text);outline-offset:1px}
   .ph-week-bar .v{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:600;color:var(--text-2);font-variant-numeric:tabular-nums}
-  .ph-week-labels{display:flex;gap:4px}
-  .ph-week-labels span{width:28px;text-align:center;font-size:10px;color:var(--text-3);font-weight:500;flex-shrink:0}
+  .ph-week-labels{display:flex;gap:6px}
+  .ph-week-labels span{width:44px;text-align:center;font-size:10px;color:var(--text-3);font-weight:500;flex-shrink:0;font-variant-numeric:tabular-nums}
   .ph-week-labels span.today{color:var(--accent);font-weight:700}
   .ph-week-labels span.month-start{color:var(--text-2);font-weight:600}
 
@@ -468,7 +477,7 @@
             <div class="ph-head"><span class="title">今日紀錄（左右滑動）</span><span class="meta" id="phTodayMeta">—</span></div>
             <div class="ph-today-wrap"><div class="ph-today" id="phToday"></div></div>
 
-            <div class="ph-head"><span class="title">每日概覽（30 天，滑動看更早）</span></div>
+            <div class="ph-head"><span class="title">每週概覽（16 週，滑動看更早）</span></div>
             <div class="ph-week-wrap">
               <div class="ph-week-inner">
                 <div class="ph-week" id="phWeek"></div>
@@ -609,7 +618,7 @@
       <div class="section">
         <div class="section-header"><span class="title">關於</span></div>
         <div class="list-group">
-          <div class="list-row"><span>版本</span><span class="v">早課 1.6</span></div>
+          <div class="list-row"><span>版本</span><span class="v">早課 1.7</span></div>
           <div class="list-row"><span>儲存方式</span><span class="v" id="storageHint">本地瀏覽器</span></div>
         </div>
       </div>
@@ -665,9 +674,9 @@ function notify(title,body){if("Notification" in window&&Notification.permission
 let audioCtx;
 function beep(){try{audioCtx||=new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.value=880;g.gain.value=.0001;o.start();g.gain.exponentialRampToValueAtTime(.18,audioCtx.currentTime+.02);g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.6);o.stop(audioCtx.currentTime+.7)}catch(e){}}
 
-/* ───── 雲端同步：15 分鐘自動 + 手動 + 切離應用時推送 ───── */
-let syncConfig=null,syncCode="",lastSync=0,lastSentTs=0,fb=null,isSyncing=false,isDirty=false;
-const AUTO_SYNC_INTERVAL=15*60*1000;
+/* ───── 雲端同步：即時自動 + 手動 + 切離應用時推送 ───── */
+let syncConfig=null,syncCode="",lastSync=0,lastSentTs=0,fb=null,isSyncing=false,isDirty=false,uploadTimer=null;
+const AUTO_SYNC_BACKUP=15*60*1000; // 備援：每 15 分鐘檢查一次有沒有漏推的
 
 function loadSyncMeta(){try{const c=localStorage.getItem(SYNC_CONFIG_KEY);if(c)syncConfig=JSON.parse(c)}catch(e){}try{const m=JSON.parse(localStorage.getItem(SYNC_META_KEY)||"{}");syncCode=m.syncCode||"";lastSync=m.lastSync||0}catch(e){}}
 function saveSyncMeta(){localStorage.setItem(SYNC_META_KEY,JSON.stringify({syncCode,lastSync}))}
@@ -709,7 +718,19 @@ async function pushNow(docRef){if(isSyncing)return;isSyncing=true;try{const ts=D
 function applyRemoteState(remoteState){if(!remoteState)return;state=migrate(Object.assign(structuredClone(defaultState),remoteState));localStorage.setItem(STORAGE_KEY,JSON.stringify(state));rerenderAll()}
 function rerenderAll(){renderTodos();renderProjects();renderStats();renderHistory();renderHideDoneToggle();applyTaskInput()}
 function disconnectSync(){if(fb&&fb.unsub)fb.unsub();fb=null;syncConfig=null;syncCode="";lastSync=0;isDirty=false;localStorage.removeItem(SYNC_CONFIG_KEY);saveSyncMeta();renderSyncStatus();toast("已中斷同步")}
-function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));if(fb){isDirty=true;renderSyncStatus()}}
+function queueUpload(){
+  if(!fb)return;
+  clearTimeout(uploadTimer);
+  uploadTimer=setTimeout(async()=>{
+    if(!fb)return;
+    try{await pushNow(fb.docRef);renderSyncStatus()}
+    catch(e){console.error(e)}
+  },1500);
+}
+function save(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+  if(fb){isDirty=true;queueUpload();renderSyncStatus()}
+}
 
 function openSyncPanel(){$("syncConfigInput").value=syncConfig?JSON.stringify(syncConfig,null,2):"";$("syncCodeInput").value=syncCode||"";$("syncPanel").hidden=false;$("syncPanel").scrollIntoView({behavior:"smooth",block:"center"})}
 function closeSyncPanel(){$("syncPanel").hidden=true}
@@ -737,12 +758,12 @@ $("syncDisconnectRow").addEventListener("click",()=>{if(confirm("確定中斷同
 loadSyncMeta();renderSyncStatus();
 if(syncConfig&&syncCode)setTimeout(()=>connectSync(syncConfig,syncCode),600);
 
-// 15 分鐘自動同步
+// 15 分鐘備援同步（即時推送失敗時的兜底）
 setInterval(async()=>{
   if(!fb||!isDirty)return;
   try{await pushNow(fb.docRef);renderSyncStatus()}
   catch(e){console.error(e)}
-},AUTO_SYNC_INTERVAL);
+},AUTO_SYNC_BACKUP);
 
 // 切離 App 或關掉分頁時推送
 document.addEventListener("visibilitychange",()=>{
@@ -955,12 +976,31 @@ function renderHistory(){
   else $("phToday").innerHTML=todays.map(h=>{const d=new Date(h.ts);const tm=`${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;const taskHtml=h.task?` · <span class="task">${escapeHtml(h.task)}</span>`:"";return `<span class="ph-chip">${tm} · ${h.duration}m${taskHtml}</span>`}).join("");
   $("phTodayMeta").textContent=todays.length>0?`${todays.length} 顆 · ${todays.reduce((s,h)=>s+h.duration,0)} 分`:"—";
 
-  // 30 天直條
-  const DAYS=30;const now=new Date();const days=[];
-  for(let i=DAYS-1;i>=0;i--){const d=new Date(now);d.setHours(0,0,0,0);d.setDate(d.getDate()-i);const key=isoDate(d);const sessions=hist.filter(h=>h.ts.slice(0,10)===key);days.push({key,count:sessions.length,min:sessions.reduce((s,h)=>s+h.duration,0),date:d})}
-  const maxC=Math.max(1,...days.map(d=>d.count));
-  $("phWeek").innerHTML=days.map(d=>{const h=d.count>0?Math.max(8,Math.round((d.count/maxC)*100)):2;return `<div class="ph-week-col" data-key="${d.key}"><div class="ph-week-bar ${d.key===today?"today":""}" style="height:${h}%">${d.count>0?`<span class="v">${d.count}</span>`:""}</div></div>`}).join("");
-  $("phWeekLabels").innerHTML=days.map(d=>{const dd=d.date.getDate();const cls=d.key===today?"today":(dd===1?"month-start":"");return `<span class="${cls}">${dd}</span>`}).join("");
+  // 16 週直條
+  const WEEKS=16;
+  const now2=new Date();
+  const curSun=new Date(now2);curSun.setHours(0,0,0,0);curSun.setDate(now2.getDate()-now2.getDay());
+  const curSunKey=isoDate(curSun);
+  const weeks=[];
+  for(let i=WEEKS-1;i>=0;i--){
+    const wkStart=new Date(curSun);wkStart.setDate(curSun.getDate()-i*7);
+    const wkEnd=new Date(wkStart);wkEnd.setDate(wkStart.getDate()+6);
+    const startKey=isoDate(wkStart),endKey=isoDate(wkEnd);
+    const sessions=hist.filter(h=>{const k=h.ts.slice(0,10);return k>=startKey&&k<=endKey});
+    weeks.push({startKey,endKey,count:sessions.length,min:sessions.reduce((s,h)=>s+h.duration,0),startDate:wkStart});
+  }
+  const maxC=Math.max(1,...weeks.map(w=>w.count));
+  $("phWeek").innerHTML=weeks.map(w=>{
+    const h=w.count>0?Math.max(8,Math.round((w.count/maxC)*100)):2;
+    const isCur=w.startKey===curSunKey;
+    return `<div class="ph-week-col" data-key="${w.startKey}"><div class="ph-week-bar ${isCur?"today":""}" style="height:${h}%">${w.count>0?`<span class="v">${w.count}</span>`:""}</div></div>`;
+  }).join("");
+  $("phWeekLabels").innerHTML=weeks.map(w=>{
+    const isCur=w.startKey===curSunKey;
+    const isMonthStart=w.startDate.getDate()<=7;
+    const cls=isCur?"today":(isMonthStart?"month-start":"");
+    return `<span class="${cls}">${w.startDate.getMonth()+1}/${w.startDate.getDate()}</span>`;
+  }).join("");
 
   // 自動捲到最右（顯示最新）
   setTimeout(()=>{document.querySelectorAll(".ph-week-wrap, .ph-today-wrap").forEach(w=>{w.scrollLeft=w.scrollWidth})},50);
