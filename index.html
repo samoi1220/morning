@@ -1325,7 +1325,7 @@ async function syncProjectToGantt(project) {
 }
 
 function syncPendingProjects() {
-  if (!window.state || !window.state.projects) return;
+  if (!state || !state.projects) return;
   state.projects.forEach(p => {
     if (!_syncedProjectIds.has(p.id)) syncProjectToGantt(p);
   });
@@ -1337,8 +1337,8 @@ function syncPendingProjects() {
     const _orig = pushNow;
     window.pushNow = async function(docRef) {
       const result = await _orig.call(this, docRef);
-      if (window.state && window.state.projects) {
-        window.state.projects.forEach(p => {
+      if (state && state.projects) {
+        state.projects.forEach(p => {
           if (!_syncedProjectIds.has(p.id)) syncProjectToGantt(p);
         });
       }
