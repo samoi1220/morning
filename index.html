@@ -1031,7 +1031,7 @@ $("projList").addEventListener("click",e=>{
   if(t.matches("[data-stagenext]")){const p=state.projects.find(x=>x.id===t.dataset.stagenext);if(p&&p.stage<STAGES.length)p.stage++;if(p&&p.stage===STAGES.length)toast(`✓ ${p.name} 全數完成`);renderProjects();return}
   // 編輯 / 刪除案件
   if(t.matches("[data-edit]")){openProjForm(t.dataset.edit);return}
-  if(t.matches("[data-pdel]")){const id=t.dataset.pdel;const p=state.projects.find(x=>x.id===id);if(p&&confirm(`確定刪除「${p.name}」？`)){state.projects=state.projects.filter(x=>x.id!==id);renderProjects()}return}
+  if(t.matches("[data-pdel]")){const id=t.dataset.pdel;const p=state.projects.find(x=>x.id===id);if(p&&confirm(`確定刪除「${p.name}」？`)){deleteProjectFromGantt(id);state.projects=state.projects.filter(x=>x.id!==id);renderProjects()}return}
   // 切換展開（最後檢查，不會誤觸前面）
   const tg=t.closest("[data-toggle]");
   if(tg){const p=state.projects.find(x=>x.id===tg.dataset.toggle);if(p){p.open=!p.open;renderProjects();return}}
