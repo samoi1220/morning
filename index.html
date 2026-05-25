@@ -1270,5 +1270,87 @@ renderTodos();renderProjects();renderStats();renderHistory();resetPomo();
 let lastDay=todayKey();
 setInterval(()=>{if(todayKey()!==lastDay){lastDay=todayKey();state.pomo.today=0;save();renderTodos();renderStats();renderHistory()}},60000);
 </script>
+
+  <script>
+const GANTT_FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDUb46d7LKl_dS-Hy--kHcXDYG866bloI8",
+  authDomain: "gantt-b3da5.firebaseapp.com",
+  projectId: "gantt-b3da5",
+  storageBucket: "gantt-b3da5.firebasestorage.app",
+  messagingSenderId: "354718313440",
+  appId: "1:354718313440:web:12d34e5af57f5111b45985"
+};
+
+let _ganttDb = null;
+let _ganttReady = false;
+const _syncedProjectIds = new Set(
+  JSON.parse(localStorage.getItem('desk_synced_to_gantt') || '[]')
+);
+
+async function initGanttFirebase() {
+  try {
+    const ganttApp =
+      firebase.apps.find(a => a.name === 'gantt_sync') ||
+      firebase.initializeApp(GANTT_FIREBASE_CONFIG, 'gantt_sync');
+    _ganttDb = ganttApp.firestore();
+    await ganttApp.auth().signInAnonymously();
+    _ganttReady = true;
+    syncPendingProjects();
+  } catch (err) {
+    console.warn('[GanttSync] 初始化失敗：', err.message);
+  }
+}
+
+async function syncProjectToGantt(project) {
+  if (!_ganttReady || !_ganttDb) return;
+  if (_syncedProjectIds.has(project.id)) return;
+  try {
+    await _ganttDb.collection('shared_cases').doc(project.id).set({
+      id:        project.id,
+      name:      project.name      || '',
+      client:    project.client    || '',
+      company:   project.company   || '',
+      startDate: project.startDate || '',
+      deadline:  project.deadline  || '',
+      payment:   project.payment   || 'unpaid',
+      syncedAt:  firebase.firestore.FieldValue.serverTimestamp(),
+      source:    'desk'
+    });
+    _syncedProjectIds.add(project.id);
+    localStorage.setItem('desk_synced_to_gantt', JSON.stringify([..._syncedProjectIds]));
+    if (typeof toast === 'function') toast('📅 已同步至甘特圖：' + project.name);
+  } catch (err) {
+    console.warn('[GanttSync] 同步失敗：', err.message);
+  }
+}
+
+function syncPendingProjects() {
+  if (!window.state || !window.state.projects) return;
+  state.projects.forEach(p => {
+    if (!_syncedProjectIds.has(p.id)) syncProjectToGantt(p);
+  });
+}
+
+(function patchPushNow() {
+  const waitAndPatch = () => {
+    if (typeof pushNow !== 'function') { setTimeout(waitAndPatch, 300); return; }
+    const _orig = pushNow;
+    window.pushNow = async function(docRef) {
+      const result = await _orig.call(this, docRef);
+      if (window.state && window.state.projects) {
+        window.state.projects.forEach(p => {
+          if (!_syncedProjectIds.has(p.id)) syncProjectToGantt(p);
+        });
+      }
+      return result;
+    };
+  };
+  waitAndPatch();
+})();
+
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(initGanttFirebase, 1000);
+});
+</script>
 </body>
 </html>
