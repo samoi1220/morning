@@ -1323,7 +1323,18 @@ async function syncProjectToGantt(project) {
     console.warn('[GanttSync] 同步失敗：', err.message);
   }
 }
-
+async function deleteProjectFromGantt(projectId) {
+  if (!_ganttReady || !_ganttDb) return;
+  if (!_syncedProjectIds.has(projectId)) return;
+  try {
+    await _ganttDb.collection('shared_cases').doc(projectId).delete();
+    _syncedProjectIds.delete(projectId);
+    localStorage.setItem('desk_synced_to_gantt', JSON.stringify([..._syncedProjectIds]));
+    console.log('[GanttSync] 已從甘特刪除：', projectId);
+  } catch (err) {
+    console.warn('[GanttSync] 刪除失敗：', err.message);
+  }
+}
 function syncPendingProjects() {
   if (!state || !state.projects) return;
   state.projects.forEach(p => {
