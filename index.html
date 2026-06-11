@@ -1,0 +1,1440 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+<title>早課</title>
+<meta name="theme-color" content="#F2F1ED" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#1C1C1E" media="(prefers-color-scheme: dark)" />
+<link rel="manifest" href="manifest.json" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="早課" />
+<link rel="apple-touch-icon" href="icon-180.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<style>
+  :root{
+    --bg:#F2F1ED;--card:#FFFFFF;--card-2:#FBFAF7;
+    --text:#1C1C1E;--text-2:#6B6962;--text-3:#A8A39B;
+    --sep:#E8E5DC;--sep-soft:#F0EDE5;
+    --fill-1:#EFECE3;--fill-2:#E4E0D5;
+    --accent:#C7553D;--accent-soft:#F7E5DE;--accent-deep:#A84531;
+    --green:#5A8E6B;--green-soft:#E1ECDF;
+    --orange:#C29442;--orange-soft:#F4E7C8;
+    --red:#BF3D2A;
+    --pri-high:#BF3D2A;--pri-normal:#C29442;--pri-low:#A8A39B;
+    --shadow-sm:0 1px 2px rgba(28,28,30,.04);
+    --shadow-md:0 2px 8px rgba(28,28,30,.05),0 1px 2px rgba(28,28,30,.04);
+    --shadow-lg:0 8px 24px rgba(28,28,30,.08);
+    --r-sm:8px;--r-md:12px;--r-lg:16px;
+    --safe-bottom:env(safe-area-inset-bottom);
+    --safe-top:env(safe-area-inset-top);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;overflow-x:hidden}
+  body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","PingFang TC","PingFang SC","Helvetica Neue","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.5;letter-spacing:-.01em;-webkit-font-smoothing:antialiased;text-size-adjust:100%}
+  ::selection{background:var(--accent-soft);color:var(--text)}
+  button{font-family:inherit;cursor:pointer;border:none;background:transparent;color:inherit;-webkit-appearance:none}
+  input,textarea,select{font-family:inherit;font-size:inherit;color:inherit;-webkit-appearance:none;border:none;outline:none;background:transparent}
+
+  .app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;max-width:880px;margin:0 auto;padding-top:var(--safe-top)}
+  .app-header{padding:14px 20px 8px;display:flex;align-items:flex-end;justify-content:space-between}
+  .app-header h1{font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+  .app-header h1 small{font-size:11px;font-weight:500;color:var(--text-3);letter-spacing:.18em;margin-left:8px;text-transform:uppercase}
+  .app-header .meta{text-align:right;line-height:1.3}
+  .app-header .clock{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+  .app-header .date{font-size:12px;color:var(--text-2);font-weight:500}
+  .sync-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:6px;background:var(--text-3);vertical-align:middle}
+  .sync-dot.connected{background:var(--green);animation:dotPulse 2s infinite}
+  .sync-dot.syncing{background:var(--orange);animation:dotPulse .8s infinite}
+  .sync-dot.error{background:var(--red)}
+  @keyframes dotPulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+  .app-main{flex:1;padding:8px 16px calc(var(--safe-bottom) + 24px);overflow-x:hidden}
+  .section{margin-bottom:22px}
+  .section-header{display:flex;justify-content:space-between;align-items:center;padding:0 4px 8px;color:var(--text-2);gap:10px;flex-wrap:wrap}
+  .section-header .title{font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+  .section-header .meta{font-size:12px;font-weight:500;color:var(--text-3);font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:8px}
+  .card{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);overflow:hidden}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;padding:0 16px;background:var(--fill-1);color:var(--text);font-size:14px;font-weight:500;border-radius:var(--r-md);transition:transform .08s,background-color .15s}
+  .btn:active{transform:scale(.97);background:var(--fill-2)}
+  .btn.primary{background:var(--accent);color:#fff}
+  .btn.primary:active{background:var(--accent-deep)}
+  .btn.danger{color:var(--red);background:transparent}
+  .btn.ghost{background:transparent;color:var(--text-2);height:32px;padding:0 10px;font-size:13px}
+  .btn.ghost:active{background:var(--fill-1)}
+  .btn-icon{width:36px;height:36px;padding:0;border-radius:var(--r-md);background:var(--accent);color:#fff;font-size:20px;font-weight:300;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+  .btn-icon:active{transform:scale(.95);background:var(--accent-deep)}
+
+  .toggle{position:relative;display:inline-block;width:38px;height:22px;flex-shrink:0}
+  .toggle input{opacity:0;width:0;height:0}
+  .toggle .slider{position:absolute;cursor:pointer;inset:0;background:var(--fill-2);transition:.2s;border-radius:22px}
+  .toggle .slider::before{position:absolute;content:"";height:18px;width:18px;left:2px;top:2px;background:#fff;transition:.2s;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+  .toggle input:checked + .slider{background:var(--accent)}
+  .toggle input:checked + .slider::before{transform:translateX(16px)}
+  .toggle-label{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-2);cursor:pointer}
+
+  /* Todo */
+  .todo-add{display:flex;flex-direction:column;gap:8px;padding:12px 14px;border-bottom:.5px solid var(--sep)}
+  .todo-add-row{display:flex;align-items:center;gap:8px}
+  .todo-add .input-wrap{flex:1;display:flex;align-items:center;gap:6px;background:var(--fill-1);border-radius:var(--r-md);padding:9px 12px}
+  .todo-add .input-wrap input{flex:1;font-size:15px}
+  .todo-add .input-wrap input::placeholder{color:var(--text-3)}
+  /* 時間 pill：整顆按鈕一律可點，點擊強制叫出時間選擇器 */
+  .time-pill{
+    display:inline-flex;align-items:center;justify-content:center;
+    background:var(--fill-1);border-radius:var(--r-md);
+    padding:8px 12px;flex-shrink:0;flex-grow:0;cursor:pointer;
+    min-height:34px;min-width:90px;
+    transition:background-color .15s;
+  }
+  .time-pill:hover{background:var(--fill-2)}
+  .time-pill:active{transform:scale(.97)}
+  .time-pill input[type=time]{
+    -webkit-appearance:auto !important;appearance:auto !important;
+    background:transparent;border:none;outline:none;
+    font-size:13px;color:var(--accent);font-weight:600;
+    font-variant-numeric:tabular-nums;
+    width:auto;min-width:78px;padding:0;cursor:pointer;
+    display:inline-block;
+  }
+  .time-pill input[type=time]:invalid{color:var(--text-3);opacity:.85}
+  .time-pill input[type=time]::-webkit-clear-button{display:none}
+  .time-pill input[type=time]::-webkit-inner-spin-button{display:none}
+  .time-pill input[type=time]::-webkit-calendar-picker-indicator{
+    cursor:pointer;opacity:.5;margin-left:4px;
+    width:16px;height:16px;
+  }
+  .time-pill input[type=time]::-webkit-calendar-picker-indicator:hover{opacity:1}
+  .time-pill input[type=time]::-webkit-datetime-edit{padding:0}
+  .todo-options{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .pri-pick{display:flex;align-items:center;gap:6px}
+  .pri-pick .label{color:var(--text-3);font-size:11px;letter-spacing:.04em}
+  .pri-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:14px;font-size:12px;font-weight:500;color:var(--text-2);background:var(--fill-1);transition:all .15s}
+  .pri-btn .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+  .pri-btn[data-p="high"] .dot{background:var(--pri-high)}
+  .pri-btn[data-p="normal"] .dot{background:var(--pri-normal)}
+  .pri-btn[data-p="low"] .dot{background:var(--pri-low)}
+  .pri-btn.active{background:var(--text);color:var(--bg)}
+  .dur-pick{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-2)}
+  .dur-pick .label{color:var(--text-3);font-size:11px;letter-spacing:.04em}
+  .dur-pick input{width:42px;text-align:center;font-variant-numeric:tabular-nums;background:var(--fill-1);border-radius:8px;padding:4px 4px;font-size:12px;color:var(--text);font-weight:600}
+
+  .todo-list{list-style:none}
+  .todo-item{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:.5px solid var(--sep-soft);transition:background-color .15s;position:relative}
+  .todo-item:last-child{border-bottom:none}
+  .todo-item:active{background:var(--fill-1)}
+  .todo-item::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:transparent}
+  .todo-item.pri-high::before{background:var(--pri-high)}
+  .todo-item.pri-normal::before{background:var(--pri-normal)}
+  .todo-item.pri-low::before{background:var(--pri-low)}
+  .todo-item.done::before{opacity:.4}
+  .todo-check{appearance:none;width:22px;height:22px;flex-shrink:0;flex-grow:0;border:1.6px solid var(--text-3);border-radius:50%;background:var(--card);position:relative;cursor:pointer;transition:all .15s}
+  .todo-check:checked{background:var(--accent);border-color:var(--accent)}
+  .todo-check:checked::after{content:"";position:absolute;left:6px;top:2px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+  .todo-text{flex:1;font-size:15px;line-height:1.4;word-break:break-word;min-width:0}
+  .todo-item.done .todo-text{color:var(--text-3);text-decoration:line-through}
+  .todo-dur{font-size:11px;color:var(--text-2);background:var(--fill-1);padding:2px 7px;border-radius:8px;font-variant-numeric:tabular-nums;flex-shrink:0;font-weight:500}
+  .todo-time{font-size:13px;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums;flex-shrink:0;padding:0 2px}
+  .todo-time.fired{color:var(--accent);animation:pulse 1.5s infinite}
+  .todo-item.done .todo-time{color:var(--text-3)}
+  .todo-item.done .todo-dur{color:var(--text-3);background:var(--fill-1)}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+  .todo-del{width:28px;height:28px;flex-shrink:0;border-radius:50%;color:var(--text-3);font-size:18px;line-height:1;opacity:0;transition:opacity .15s}
+  .todo-item:hover .todo-del{opacity:1}
+  .todo-del:active{background:var(--fill-1);color:var(--red);opacity:1}
+  @media(max-width:600px){
+    .todo-del{opacity:.6}
+    .todo-item{flex-wrap:wrap;row-gap:6px}
+    .todo-text{flex:1 0 calc(100% - 70px);min-width:0}
+    .todo-dur,.todo-time{margin-left:auto}
+    .todo-time{margin-left:6px}
+  }
+  .empty{text-align:center;padding:36px 16px;color:var(--text-3);font-size:14px}
+
+  /* Pomodoro */
+  .pomo{padding:18px 16px 18px;text-align:center}
+  .pomo-task{
+    width:100%;background:var(--fill-1);border-radius:var(--r-md);
+    padding:10px 14px;margin-bottom:18px;
+    font-size:14px;color:var(--text);text-align:left;
+  }
+  .pomo-task::placeholder{color:var(--text-3)}
+  .pomo-time{font-size:64px;font-weight:300;letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1;margin-bottom:6px}
+  .pomo-mode{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-2);margin-bottom:18px;font-weight:600}
+  .pomo-mode.work{color:var(--accent)}
+  .pomo-mode.break{color:var(--green)}
+  .pomo-controls{display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+  .pomo-stats{display:flex;justify-content:space-around;padding:14px 8px 6px;border-top:.5px solid var(--sep);margin-top:8px}
+  .pomo-stat{text-align:center}
+  .pomo-stat b{display:block;font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.2}
+  .pomo-stat span{font-size:11px;color:var(--text-2);font-weight:500}
+
+  .pomo-history{border-top:.5px solid var(--sep);background:var(--card-2);padding:14px 16px}
+  .ph-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px;flex-wrap:wrap}
+  .ph-head .title{font-size:11px;font-weight:600;color:var(--text-2);letter-spacing:.06em;text-transform:uppercase}
+  .ph-head .meta{font-size:11px;color:var(--text-3);font-variant-numeric:tabular-nums}
+  .ph-today-wrap{margin-bottom:14px}
+  .ph-today{display:flex;flex-wrap:wrap;gap:6px}
+  .ph-chip{font-size:11px;font-weight:600;color:var(--accent);background:var(--accent-soft);padding:4px 10px;border-radius:10px;font-variant-numeric:tabular-nums;white-space:nowrap;flex-shrink:0;display:inline-flex;align-items:center;gap:5px}
+  .ph-chip .task{color:var(--text);font-weight:500;max-width:140px;overflow:hidden;text-overflow:ellipsis}
+  .ph-chip-empty{font-size:12px;color:var(--text-3);font-style:italic;padding:4px 0}
+
+  /* 週概覽：每頁 7 天，左右滑動切換週次 */
+  .ph-week-wrap{
+    margin-bottom:6px;overflow-x:auto;overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    scroll-snap-type:x mandatory;
+    scrollbar-width:none;
+  }
+  .ph-week-wrap::-webkit-scrollbar{display:none}
+  .ph-week-pages{display:flex}
+  .ph-week-page{
+    flex:0 0 100%;width:100%;
+    scroll-snap-align:start;scroll-snap-stop:always;
+    padding:14px 4px 4px;
+  }
+  .ph-page-bars{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    height:78px;gap:4px;margin-bottom:10px;padding:14px 4px 0;
+  }
+  .ph-page-col{
+    flex:1;display:flex;flex-direction:column;
+    align-items:center;justify-content:flex-end;
+    height:100%;cursor:pointer;max-width:60px;
+  }
+  .ph-page-bar{
+    width:24px;background:var(--accent-soft);
+    border-radius:4px 4px 0 0;min-height:2px;
+    position:relative;transition:height .25s;
+  }
+  .ph-page-bar.today{background:var(--accent)}
+  .ph-page-bar .v{
+    position:absolute;top:-15px;left:50%;transform:translateX(-50%);
+    font-size:10px;font-weight:600;color:var(--text-2);
+    font-variant-numeric:tabular-nums;
+  }
+  .ph-page-labels{display:flex;justify-content:space-between;gap:4px;padding:0 4px}
+  .ph-page-label{
+    flex:1;display:flex;align-items:center;justify-content:center;
+    gap:5px;max-width:60px;
+  }
+  .ph-page-num{
+    font-size:14px;font-weight:600;color:var(--text);
+    width:26px;height:26px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-variant-numeric:tabular-nums;flex-shrink:0;
+  }
+  .ph-page-num.today{background:var(--accent);color:#fff}
+  .ph-page-num.future,.ph-page-name.future{color:var(--text-3);opacity:.55}
+  .ph-page-name{font-size:12px;color:var(--text-2);font-weight:500;white-space:nowrap}
+  .ph-page-name.today{color:var(--accent);font-weight:700}
+  @media(max-width:480px){
+    .ph-page-label{gap:3px}
+    .ph-page-num{font-size:13px;width:22px;height:22px}
+    .ph-page-name{font-size:10px}
+  }
+
+  /* 週篩選器 */
+  .week-picker{
+    margin:14px 0 8px;padding:10px 12px;
+    background:var(--card);border-radius:var(--r-md);
+    display:flex;align-items:center;gap:8px;
+  }
+  .week-picker button{
+    width:30px;height:30px;border-radius:50%;
+    color:var(--text-2);font-size:18px;line-height:1;
+    background:var(--fill-1);
+  }
+  .week-picker button:active{background:var(--fill-2);color:var(--accent)}
+  .week-picker .range{flex:1;text-align:center;font-size:13px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
+  .week-picker input[type=date]{width:130px;text-align:center;font-size:12px;font-variant-numeric:tabular-nums;color:var(--text-2);background:var(--fill-1);border-radius:8px;padding:4px}
+
+  .week-stats{padding:6px 0 4px}
+  .ws-total{font-size:18px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;margin-bottom:8px}
+  .ws-total .label{font-size:11px;color:var(--text-2);font-weight:500;letter-spacing:.04em;text-transform:uppercase;margin-right:6px}
+  .ws-tasks{display:flex;flex-direction:column;gap:5px;margin-top:6px}
+  .ws-task{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:7px 12px;background:var(--card);border-radius:8px;font-size:12px;border:.5px solid var(--sep)}
+  .ws-task .name{color:var(--text);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+  .ws-task .name.empty{color:var(--text-3);font-style:italic}
+  .ws-task .count,.ws-task .min{color:var(--text-2);font-variant-numeric:tabular-nums;font-weight:600;font-size:11px;white-space:nowrap}
+  .ws-empty{color:var(--text-3);font-size:12px;font-style:italic;text-align:center;padding:12px 0}
+
+  .ph-summary{margin-top:14px;padding-top:10px;border-top:.5px dashed var(--sep);font-size:11px;color:var(--text-2);display:flex;justify-content:space-around;font-variant-numeric:tabular-nums}
+  .ph-summary b{color:var(--text);font-weight:600}
+
+  .pomo-settings{padding:14px 16px;border-top:.5px solid var(--sep);display:grid;grid-template-columns:1fr 1fr;gap:10px;background:var(--card-2)}
+  .pomo-settings label{
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:13px;color:var(--text-2);font-weight:500;
+    background:var(--card);border-radius:var(--r-md);
+    padding:10px 14px;min-height:44px;cursor:pointer;
+    transition:background-color .15s;
+  }
+  .pomo-settings label:hover{background:var(--fill-1)}
+  .pomo-settings label:active{transform:scale(.98)}
+  .pomo-settings input{
+    width:64px;text-align:center;
+    font-variant-numeric:tabular-nums;
+    color:var(--accent);font-weight:600;font-size:15px;
+    background:var(--fill-1);border-radius:8px;
+    padding:6px 8px;cursor:pointer;
+    -webkit-appearance:none;appearance:none;-moz-appearance:textfield;
+  }
+  .pomo-settings input::-webkit-outer-spin-button,
+  .pomo-settings input::-webkit-inner-spin-button{
+    -webkit-appearance:none;margin:0;
+  }
+  .pomo-settings input:focus{background:var(--accent-soft);outline:1.5px solid var(--accent)}
+
+  /* Projects */
+  .search{background:var(--fill-1);border-radius:var(--r-md);padding:8px 12px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+  .search svg{color:var(--text-3);flex-shrink:0}
+  .search input{flex:1;font-size:15px}
+  .search input::placeholder{color:var(--text-3)}
+  .segmented{display:flex;background:var(--fill-1);border-radius:9px;padding:2px;gap:2px;margin-bottom:10px}
+  .segmented button{flex:1;min-width:0;height:30px;font-size:12px;font-weight:500;color:var(--text);border-radius:7px;transition:all .2s cubic-bezier(.4,0,.2,1)}
+  .segmented button.active{background:var(--card);box-shadow:0 1px 2px rgba(0,0,0,.06);font-weight:600}
+  .proj-add-btn{margin-bottom:14px;width:100%;height:42px}
+
+  .proj-form{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow-md);margin-bottom:14px;overflow:hidden;animation:slideDown .25s ease-out}
+  @keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+  .proj-form-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:.5px solid var(--sep)}
+  .proj-form-head .title{font-size:15px;font-weight:600}
+  .field-group{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:.5px solid var(--sep-soft)}
+  .field-group:last-child{border-bottom:none}
+  .field-group .k{font-size:13px;color:var(--text-2);font-weight:500;min-width:48px;flex-shrink:0}
+  .field-group input,.field-group select{flex:1;font-size:15px;text-align:right}
+  .field-group input::placeholder{color:var(--text-3)}
+  /* 日期欄位：整個 pill 可點，強制叫出原生日期選擇器 */
+  .field-group.date-field{cursor:pointer;user-select:none}
+  .field-group.date-field:active{background:var(--fill-1)}
+  .field-group input[type=date]{
+    -webkit-appearance:none;appearance:none;
+    background:transparent;border:none;outline:none;
+    color:var(--accent);font-weight:600;
+    font-variant-numeric:tabular-nums;
+    cursor:pointer;min-height:24px;
+  }
+  .field-group input[type=date]:invalid{color:var(--text-3);opacity:.85}
+  .field-group input[type=date]::-webkit-date-and-time-value{text-align:right;line-height:1.2}
+  .field-group input[type=date]::-webkit-calendar-picker-indicator{
+    cursor:pointer;opacity:.45;margin-left:6px;
+    width:18px;height:18px;
+  }
+  .field-group input[type=date]::-webkit-calendar-picker-indicator:hover{opacity:1}
+  .field-group input[type=date]::-webkit-inner-spin-button{display:none}
+  @media(max-width:600px){
+    .field-group.date-field{padding:13px 16px}
+    .field-group input[type=date]{
+      font-size:16px;  /* iOS 避免縮放 */
+      min-height:32px;text-align:right;
+    }
+  }
+  .field-row{display:grid;grid-template-columns:1fr 1fr;border-bottom:.5px solid var(--sep-soft)}
+  .field-row .field-group{border-bottom:none;border-right:.5px solid var(--sep-soft)}
+  .field-row .field-group:last-child{border-right:none}
+  .pf-substages{border-top:6px solid var(--bg);background:var(--card)}
+  .pf-substages-head{padding:12px 16px 8px}
+  .pf-substages-head .label{font-size:11px;color:var(--text-2);letter-spacing:.06em;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+  .pf-tabs{display:flex;background:var(--fill-1);border-radius:9px;padding:2px;gap:2px}
+  .pf-tabs button{flex:1;height:30px;font-size:12px;font-weight:500;color:var(--text);border-radius:7px;display:flex;align-items:center;justify-content:center;gap:4px}
+  .pf-tabs button.active{background:var(--card);box-shadow:0 1px 2px rgba(0,0,0,.06);font-weight:600}
+  .pf-tabs .frac{font-size:10px;color:var(--text-3);font-weight:500;font-variant-numeric:tabular-nums}
+  .pf-tabs button.active .frac{color:var(--accent)}
+  .pf-sub-list{padding:0 8px}
+  .pf-sub-item{display:flex;align-items:center;gap:10px;padding:8px;border-bottom:.5px solid var(--sep-soft)}
+  .pf-sub-item:last-child{border-bottom:none}
+  .pf-sub-item input[type=checkbox]{appearance:none;width:20px;height:20px;flex-shrink:0;border:1.6px solid var(--text-3);border-radius:50%;background:var(--card);position:relative;cursor:pointer}
+  .pf-sub-item input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
+  .pf-sub-item input[type=checkbox]:checked::after{content:"";position:absolute;left:5px;top:1px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+  .pf-sub-item input[type=text]{flex:1;font-size:14px;padding:4px 0;border-bottom:1px solid transparent;color:var(--text)}
+  .pf-sub-item input[type=text]:focus{border-bottom-color:var(--accent-soft)}
+  .pf-sub-item.done input[type=text]{color:var(--text-3);text-decoration:line-through}
+  .pf-sub-item .del{width:24px;height:24px;border-radius:50%;color:var(--text-3);font-size:16px}
+  .pf-sub-item .del:active{background:var(--fill-1);color:var(--red)}
+  .pf-sub-empty{color:var(--text-3);font-size:13px;font-style:italic;padding:14px 8px;text-align:center}
+  .pf-sub-add{display:flex;gap:8px;padding:10px 16px;background:var(--card-2);border-top:.5px solid var(--sep)}
+  .pf-sub-add input{flex:1;font-size:14px;background:var(--card);border-radius:8px;padding:7px 10px;color:var(--text)}
+  .pf-sub-add button{height:30px;padding:0 12px;font-size:12px;background:var(--accent);color:#fff;border-radius:8px;font-weight:600}
+  .proj-form-actions{display:flex;gap:8px;padding:12px 16px;background:var(--card-2);border-top:.5px solid var(--sep)}
+  .proj-form-actions .btn{flex:1}
+
+  .proj-list{display:flex;flex-direction:column;gap:10px}
+  .proj{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);overflow:hidden;transition:box-shadow .15s,transform .08s;position:relative}
+  .proj.urgent::before,.proj.overdue::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+  .proj.complete{opacity:.55}
+  .proj-row{padding:12px 16px;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;transition:background-color .15s}
+  .proj-row:active{background:var(--fill-1)}
+  .proj-name{font-size:15px;font-weight:600;letter-spacing:-.01em;grid-column:1/-1;line-height:1.35}
+  .proj-tags{display:flex;gap:6px;align-items:center;flex-wrap:wrap;grid-column:1/2;font-size:12px;color:var(--text-2)}
+  .proj-client{font-size:13px;color:var(--text-2)}
+  .proj-deadline{font-size:12px;color:var(--text-2);font-weight:500;font-variant-numeric:tabular-nums;grid-column:2/3;text-align:right;white-space:nowrap}
+  .proj-deadline.urgent{color:var(--accent);font-weight:600}
+  .proj-deadline.overdue{color:var(--red);font-weight:700}
+  .pay{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px}
+  .pay.unpaid{background:var(--fill-1);color:var(--text-2)}
+  .pay.deposit{background:var(--orange-soft);color:var(--orange)}
+  .pay.paid{background:var(--green-soft);color:var(--green)}
+  .proj-body{display:none;border-top:.5px solid var(--sep);padding:14px 16px;background:var(--card-2)}
+  .proj.open .proj-body{display:block}
+  .proj-info{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;margin-bottom:14px;font-size:13px}
+  .proj-info .row{display:flex;gap:8px}
+  .proj-info .row .k{color:var(--text-3);min-width:36px;font-size:12px}
+
+  /* 階段條 — 重新設計，支援深色模式 */
+  .stages{display:flex;background:var(--fill-1);border-radius:9px;padding:2px;gap:2px;margin-bottom:8px}
+  .stage{
+    flex:1;min-height:42px;border-radius:7px;
+    background:transparent;color:var(--text-2);
+    font-size:12px;font-weight:500;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:1px;cursor:pointer;
+    transition:all .2s cubic-bezier(.4,0,.2,1);
+    border:1.5px solid transparent;
+  }
+  .stage:active{transform:scale(.96)}
+  .stage:hover{background:var(--fill-2)}
+  .stage.done{background:var(--accent-soft);color:var(--accent);font-weight:600}
+  .stage.active{background:var(--accent);color:#fff;font-weight:700}
+  .stage.expanded{border-color:var(--accent)}
+  .stage .frac{font-size:10px;font-weight:600;opacity:.85;font-variant-numeric:tabular-nums}
+
+  .substage{background:var(--card);border-radius:var(--r-md);padding:10px 4px 4px;margin-bottom:10px;box-shadow:var(--shadow-sm)}
+  .substage h4{font-size:11px;color:var(--text-2);letter-spacing:.06em;text-transform:uppercase;font-weight:600;padding:0 12px 8px}
+  .substage ul{list-style:none}
+  .substage li{display:flex;align-items:center;gap:10px;padding:9px 12px;font-size:14px;border-bottom:.5px solid var(--sep-soft)}
+  .substage li:last-of-type{border-bottom:none}
+  .substage li input[type=checkbox]{appearance:none;width:20px;height:20px;flex-shrink:0;border:1.6px solid var(--text-3);border-radius:50%;background:var(--card);position:relative;cursor:pointer}
+  .substage li input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
+  .substage li input[type=checkbox]:checked::after{content:"";position:absolute;left:5px;top:1px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+  .substage li.done span{color:var(--text-3);text-decoration:line-through}
+  .substage li span{flex:1;line-height:1.35;word-break:break-word;min-width:0}
+  .substage li button{width:24px;height:24px;border-radius:50%;color:var(--text-3);font-size:14px;flex-shrink:0}
+  .substage li button:active{background:var(--fill-1);color:var(--red)}
+  .substage .add-sub{display:flex;gap:6px;padding:8px;border-top:.5px solid var(--sep-soft)}
+  .substage .add-sub input{flex:1;font-size:13px;background:var(--fill-1);border-radius:8px;padding:6px 10px;color:var(--text)}
+  .substage .add-sub button{height:28px;padding:0 12px;font-size:12px;font-weight:600;background:var(--accent);color:#fff;border-radius:8px}
+  .proj-actions{display:flex;justify-content:space-between;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .proj-actions .left,.proj-actions .right{display:flex;gap:6px}
+
+  /* More */
+  .list-group{background:var(--card);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
+  .list-row{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;font-size:15px;border-bottom:.5px solid var(--sep-soft);transition:background-color .15s;cursor:pointer}
+  .list-row:last-child{border-bottom:none}
+  .list-row:active{background:var(--fill-1)}
+  .list-row .v{color:var(--text-2);font-size:13px;display:flex;align-items:center;gap:4px}
+  .list-row .chevron{color:var(--text-3);font-size:14px}
+  .list-row.danger{color:var(--red)}
+
+  .sync-panel{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow-md);overflow:hidden;margin-top:10px;animation:slideDown .25s ease-out}
+  .sync-panel-head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:.5px solid var(--sep)}
+  .sync-panel-head .title{font-size:15px;font-weight:600}
+  .sync-panel-body{padding:14px 16px}
+  .sync-panel-body .label{font-size:11px;color:var(--text-2);letter-spacing:.06em;text-transform:uppercase;font-weight:600;margin-bottom:6px;display:block}
+  .sync-panel-body textarea{width:100%;min-height:120px;background:var(--fill-1);border-radius:var(--r-md);padding:10px 12px;font-family:"SF Mono",ui-monospace,Menlo,monospace;font-size:11px;line-height:1.5;color:var(--text);margin-bottom:12px;resize:vertical}
+  .sync-panel-body input[type=text]{width:100%;background:var(--fill-1);border-radius:var(--r-md);padding:10px 12px;font-size:14px;color:var(--text);margin-bottom:12px}
+  .sync-hint{font-size:12px;color:var(--text-3);margin-bottom:12px;line-height:1.5}
+  .sync-actions{display:flex;gap:8px;padding:12px 16px;background:var(--card-2);border-top:.5px solid var(--sep)}
+  .sync-actions .btn{flex:1}
+
+  .top-tabs{position:sticky;top:0;z-index:40;background:rgba(242,241,237,.85);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:.5px solid var(--sep);padding:8px 16px;display:flex;gap:8px}
+  .top-tabs button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;height:38px;border-radius:10px;font-size:13px;font-weight:600;color:var(--text-2);background:transparent;transition:all .15s}
+  .top-tabs button.active{background:var(--card);color:var(--accent);box-shadow:var(--shadow-sm)}
+  .top-tabs button:active{transform:scale(.98)}
+  .top-tabs svg{width:18px;height:18px}
+
+  .tab-content{display:none}
+  .tab-content.active{display:block;animation:fadeIn .2s}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+  .toast{position:fixed;left:50%;bottom:calc(var(--safe-bottom) + 24px);transform:translateX(-50%) translateY(20px);background:rgba(28,28,30,.92);color:#fff;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:10px 18px;font-size:13px;font-weight:500;border-radius:24px;box-shadow:var(--shadow-lg);opacity:0;transition:all .25s cubic-bezier(.4,0,.2,1);pointer-events:none;max-width:90%;z-index:100;text-align:center}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @media(min-width:880px){
+    body{padding:8px 0}
+    .app{max-width:1100px;padding:0 24px}
+    .app-header{padding:24px 0 16px}
+    .app-header h1{font-size:34px}
+    .app-main{padding:0 0 32px}
+    .top-tabs{margin-top:6px;border-radius:14px;border:.5px solid var(--sep);position:relative;top:auto}
+    .pomo-time{font-size:72px}
+  }
+  @media(max-width:480px){
+    .app-header h1{font-size:24px}
+    .pomo-time{font-size:56px}
+    .field-row{grid-template-columns:1fr}
+    .field-row .field-group{border-right:none;border-bottom:.5px solid var(--sep-soft)}
+    .field-row .field-group:last-child{border-bottom:none}
+    .stages{padding:3px;gap:3px}
+    .stage{font-size:11px;min-height:48px}
+    .proj-info{grid-template-columns:1fr}
+    .top-tabs button .label-text{display:none}
+    .top-tabs button svg{width:20px;height:20px}
+    .top-tabs button{height:42px}
+  }
+  @media(prefers-color-scheme:dark){
+    :root{
+      --bg:#000000;--card:#1C1C1E;--card-2:#2C2C2E;
+      --text:#F5F4F0;--text-2:#9B9892;--text-3:#5C5A55;
+      --sep:#2C2C2E;--sep-soft:#252527;
+      --fill-1:#2C2C2E;--fill-2:#3A3A3C;
+      --accent:#FF8060;--accent-soft:#3D2620;--accent-deep:#E56B47;
+      --green:#7DB389;--green-soft:#1F2F23;
+      --orange:#E0B45F;--orange-soft:#332A18;--red:#FF7A6B;
+      --pri-high:#FF7A6B;--pri-normal:#E0B45F;--pri-low:#7C7A75;
+      --shadow-sm:0 1px 2px rgba(0,0,0,.3);
+      --shadow-md:0 2px 8px rgba(0,0,0,.4);
+      --shadow-lg:0 8px 24px rgba(0,0,0,.5);
+    }
+    .top-tabs{background:rgba(28,28,30,.85)}
+    .stage{color:var(--text-2)}
+    .stage.done{background:var(--accent-soft);color:var(--accent)}
+    .stage.active{background:var(--accent);color:#1C1C1E}
+    .stage.expanded{border-color:var(--accent)}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="app-header">
+    <div><h1>早課<small>Morning</small></h1></div>
+    <div class="meta">
+      <div class="clock" id="clockLabel">--:--:--</div>
+      <div class="date" id="dateLabel">—</div>
+    </div>
+  </header>
+
+  <nav class="top-tabs">
+    <button type="button" data-go="today" class="active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.5"/><path d="M12 3v1.5M12 19.5V21M21 12h-1.5M4.5 12H3M18.36 5.64l-1.06 1.06M6.7 17.3l-1.06 1.06M18.36 18.36l-1.06-1.06M6.7 6.7L5.64 5.64"/></svg>
+      <span class="label-text">今日</span>
+    </button>
+    <button type="button" data-go="projects">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="4" rx="1"/><rect x="3.5" y="10.5" width="17" height="4" rx="1"/><rect x="3.5" y="16.5" width="11" height="3" rx="1"/></svg>
+      <span class="label-text">案件</span>
+    </button>
+    <button type="button" data-go="more">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span class="label-text">設定</span>
+    </button>
+  </nav>
+
+  <main class="app-main">
+
+    <!-- 今日 -->
+    <section class="tab-content active" data-tab="today">
+      <div class="section">
+        <div class="section-header">
+          <span class="title">今日待辦</span>
+          <span class="meta">
+            <label class="toggle-label">
+              <span>隱藏完成</span>
+              <span class="toggle"><input type="checkbox" id="hideDoneToggle"><span class="slider"></span></span>
+            </label>
+            <span id="todoCount">0 / 0</span>
+          </span>
+        </div>
+        <div class="card">
+          <div class="todo-add">
+            <div class="todo-add-row">
+              <div class="input-wrap"><input type="text" id="todoInput" placeholder="新增事項…" /></div>
+              <label class="time-pill" id="todoTimePill" title="提醒時間">
+                <input type="time" id="todoTime" />
+              </label>
+              <button type="button" class="btn-icon" id="todoAdd" aria-label="新增">＋</button>
+            </div>
+            <div class="todo-options">
+              <div class="pri-pick">
+                <span class="label">重要</span>
+                <button type="button" class="pri-btn" data-p="low"><span class="dot"></span>低</button>
+                <button type="button" class="pri-btn active" data-p="normal"><span class="dot"></span>中</button>
+                <button type="button" class="pri-btn" data-p="high"><span class="dot"></span>高</button>
+              </div>
+              <div class="dur-pick">
+                <span class="label">預估</span>
+                <input type="number" id="todoDur" min="0" max="999" placeholder="—" />
+                <span class="label">分</span>
+              </div>
+            </div>
+          </div>
+          <ul class="todo-list" id="todoList"></ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><span class="title">番茄鐘</span><span class="meta" id="pomoStatus">待機中</span></div>
+        <div class="card">
+          <div class="pomo">
+            <input type="text" class="pomo-task" id="pomoTask" placeholder="正在做什麼…（可選）" />
+            <div class="pomo-time" id="pomoTime">25:00</div>
+            <div class="pomo-mode work" id="pomoMode">工作中</div>
+            <div class="pomo-controls">
+              <button type="button" class="btn primary" id="pomoStart">開始</button>
+              <button type="button" class="btn" id="pomoPause">暫停</button>
+              <button type="button" class="btn ghost" id="pomoReset">重置</button>
+              <button type="button" class="btn ghost" id="pomoSkip">跳過</button>
+            </div>
+            <div class="pomo-stats">
+              <div class="pomo-stat"><b id="statToday">0</b><span>今日完成</span></div>
+              <div class="pomo-stat"><b id="statTotal">0</b><span>累計番茄</span></div>
+              <div class="pomo-stat"><b id="statMin">0</b><span>專注分鐘</span></div>
+            </div>
+          </div>
+          <div class="pomo-history">
+            <div class="ph-head"><span class="title">今日紀錄</span><span class="meta" id="phTodayMeta">—</span></div>
+            <div class="ph-today-wrap"><div class="ph-today" id="phToday"></div></div>
+
+            <div class="ph-head"><span class="title">每週概覽（左右滑動切換週次）</span></div>
+            <div class="ph-week-wrap" id="phWeekWrap">
+              <div class="ph-week-pages" id="phWeekPages"></div>
+            </div>
+
+            <div class="week-picker">
+              <button type="button" id="phPrevWk" aria-label="上週">‹</button>
+              <span class="range" id="phWkRange">—</span>
+              <input type="date" id="phWkPicker" />
+              <button type="button" id="phNextWk" aria-label="下週">›</button>
+            </div>
+            <div class="week-stats">
+              <div class="ws-total"><span class="label">該週合計</span><span id="wsTotal">— 顆 · — 分</span></div>
+              <div class="ws-tasks" id="wsTasks"></div>
+            </div>
+
+            <div class="ph-summary" id="phSummary"></div>
+          </div>
+          <div class="pomo-settings">
+            <label>工作 <input type="number" id="setWork" min="1" max="120" value="25"> 分</label>
+            <label>短休 <input type="number" id="setBreak" min="1" max="60" value="5"> 分</label>
+            <label>長休 <input type="number" id="setLong" min="1" max="60" value="15"> 分</label>
+            <label>循環 <input type="number" id="setCycle" min="2" max="8" value="4"> 次</label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 案件 -->
+    <section class="tab-content" data-tab="projects">
+      <div class="section">
+        <div class="section-header"><span class="title">案件進度</span><span class="meta" id="projCount">0 件</span></div>
+        <div class="search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" id="projSearch" placeholder="搜尋案件、客戶、公司…" />
+        </div>
+        <div class="segmented" id="projFilters">
+          <button type="button" data-f="all" class="active">全部</button>
+          <button type="button" data-f="active">進行</button>
+          <button type="button" data-f="urgent">即將</button>
+          <button type="button" data-f="overdue">逾期</button>
+          <button type="button" data-f="done">完成</button>
+        </div>
+        <button type="button" class="btn primary proj-add-btn" id="projToggleForm">＋ 新增案件</button>
+
+        <div class="proj-form" id="projForm" hidden>
+          <div class="proj-form-head">
+            <span class="title" id="pf_title">新增案件</span>
+            <button type="button" class="btn ghost" id="pf_cancel">取消</button>
+          </div>
+          <div class="field-group"><span class="k">名稱</span><input type="text" id="pf_name" placeholder="案件名稱" /></div>
+          <div class="field-row">
+            <div class="field-group"><span class="k">客戶</span><input type="text" id="pf_client" placeholder="窗口" /></div>
+            <div class="field-group"><span class="k">公司</span><input type="text" id="pf_company" placeholder="公司" /></div>
+          </div>
+          <div class="field-row">
+            <label class="field-group date-field" for="pf_start"><span class="k">開始</span><input type="date" id="pf_start" /></label>
+            <label class="field-group date-field" for="pf_deadline"><span class="k">交稿</span><input type="date" id="pf_deadline" /></label>
+          </div>
+          <div class="field-group">
+            <span class="k">付款</span>
+            <select id="pf_payment">
+              <option value="unpaid">未付款</option>
+              <option value="deposit">訂金</option>
+              <option value="paid">已付款</option>
+            </select>
+          </div>
+          <div class="pf-substages">
+            <div class="pf-substages-head">
+              <div class="label">階段細項</div>
+              <div class="pf-tabs" id="pf_tabs">
+                <button type="button" data-pftab="0" class="active">初稿</button>
+                <button type="button" data-pftab="1">校對</button>
+                <button type="button" data-pftab="2">印前</button>
+                <button type="button" data-pftab="3">交稿</button>
+              </div>
+            </div>
+            <div class="pf-sub-list" id="pf_subList"></div>
+            <div class="pf-sub-add">
+              <input type="text" id="pf_subAddInput" placeholder="新增細項…" />
+              <button type="button" id="pf_subAddBtn">加入</button>
+            </div>
+          </div>
+          <div class="proj-form-actions">
+            <button type="button" class="btn" id="pf_cancel2">取消</button>
+            <button type="button" class="btn primary" id="pf_save">建立</button>
+          </div>
+        </div>
+        <div class="proj-list" id="projList"></div>
+      </div>
+    </section>
+
+    <!-- 設定 -->
+    <section class="tab-content" data-tab="more">
+      <div class="section">
+        <div class="section-header"><span class="title">雲端同步</span></div>
+        <div class="list-group">
+          <div class="list-row">
+            <span>狀態</span>
+            <span class="v"><span class="sync-dot" id="syncDot"></span><span id="syncStatus">未連線</span></span>
+          </div>
+          <div class="list-row" id="syncOpenRow"><span id="syncOpenLabel">設定 Firebase 同步</span><span class="chevron">›</span></div>
+          <div class="list-row" id="syncForceRow" hidden><span>立即同步</span><span class="chevron">↻</span></div>
+          <div class="list-row danger" id="syncDisconnectRow" hidden><span>中斷同步</span></div>
+        </div>
+
+        <div class="sync-panel" id="syncPanel" hidden>
+          <div class="sync-panel-head"><span class="title">Firebase 同步設定</span><button type="button" class="btn ghost" id="syncPanelClose">關閉</button></div>
+          <div class="sync-panel-body">
+            <span class="label">Firebase Config（整段貼上）</span>
+            <textarea id="syncConfigInput" placeholder='{ "apiKey": "...", "projectId": "...", ... }'></textarea>
+            <div class="sync-hint">從 Firebase 主控台 → 齒輪「專案設定」→ 拉到下方「你的應用程式」→ 點 Web 應用，把 firebaseConfig 大括號內容整段貼上。</div>
+            <span class="label">同步碼</span>
+            <input type="text" id="syncCodeInput" placeholder="例：jamai-2026-secret" />
+            <div class="sync-hint">自訂的辨識字串，所有裝置必須一致。建議用「英數字 + 連字符」。</div>
+          </div>
+          <div class="sync-actions"><button type="button" class="btn" id="syncCancel">取消</button><button type="button" class="btn primary" id="syncConnect">連線</button></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><span class="title">通知與權限</span></div>
+        <div class="list-group">
+          <div class="list-row" id="permRow"><span>桌面通知</span><span class="v" id="permStatus">未設定</span></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-header"><span class="title">資料</span></div>
+        <div class="list-group">
+          <div class="list-row" id="exportBtn"><span>匯出備份 (.json)</span><span class="chevron">›</span></div>
+          <div class="list-row" id="importBtn"><span>匯入備份</span><span class="chevron">›</span></div>
+          <div class="list-row danger" id="reseedBtn"><span>重置案件清單</span><span class="chevron">›</span></div>
+          <input type="file" id="importFile" accept=".json" style="display:none">
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-header"><span class="title">關於</span></div>
+        <div class="list-group">
+          <div class="list-row"><span>版本</span><span class="v">早課 1.7</span></div>
+          <div class="list-row"><span>儲存方式</span><span class="v" id="storageHint">本地瀏覽器</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
+<script>
+const STORAGE_KEY="desk-v2";
+const SYNC_CONFIG_KEY="desk-sync-config";
+const SYNC_META_KEY="desk-sync-meta";
+const STAGES=["初稿","校對","印前","交稿"];
+const DEFAULT_SUBTASKS={0:["收集素材","版型設計","內容排入"],1:["一校","二校","客戶確認"],2:["完稿檢查","印前打樣"],3:["檔案交付","結案"]};
+const SEED_PROJECTS=[
+  {name:"2027 國家公園月曆製作案",client:"歐陽駿",company:"台灣建築雜誌社",startDate:"2026-01-08",deadline:"2026-10-31",payment:"unpaid"},
+  {name:"救國團 — 林口運動中心",client:"李正奇",company:"原點創意",startDate:"2026-03-19",deadline:"2026-04-01",payment:"unpaid"},
+  {name:"救國團 — 西門簡章（新竹拆分 1/3）",client:"李正奇",company:"原點創意",startDate:"2026-03-20",deadline:"2026-04-01",payment:"unpaid"},
+  {name:"救國團 — 天母簡章",client:"李正奇",company:"原點創意",startDate:"2026-03-20",deadline:"2026-04-01",payment:"unpaid"},
+  {name:"救國團 — 演藝簡章（新竹拆分 2/3）",client:"李正奇",company:"原點創意",startDate:"2026-03-21",deadline:"2026-04-01",payment:"unpaid"},
+  {name:"救國團 — 竹北簡章（新竹拆分 3/3）",client:"李正奇",company:"原點創意",startDate:"2026-03-23",deadline:"2026-04-01",payment:"unpaid"},
+  {name:"救國團 — 三重簡章",client:"李正奇",company:"原點創意",startDate:"2026-03-25",deadline:"2026-04-03",payment:"unpaid"},
+  {name:"救國團 — 南京雙面 A4",client:"李正奇",company:"原點創意",startDate:"2026-03-31",deadline:"2026-04-16",payment:"unpaid"},
+  {name:"名片地圖繪製",client:"李正奇",company:"原點創意",startDate:"2026-04-02",deadline:"2026-04-09",payment:"unpaid"},
+  {name:"幼獅盃籃球鬥牛賽",client:"李正奇",company:"原點創意",startDate:"2026-04-09",deadline:"2026-04-25",payment:"unpaid"},
+  {name:"瑞祺電通 2026 ESG 永續報告書",client:"陳怡靜",company:"科建管理顧問",startDate:"2026-04-09",deadline:"2026-07-10",payment:"unpaid"},
+  {name:"救國團 — 天母雙面 A4",client:"李正奇",company:"原點創意",startDate:"2026-04-12",deadline:"",payment:"unpaid"},
+  {name:"救國團 — 八德運動中心",client:"李正奇",company:"原點創意",startDate:"2026-04-13",deadline:"2026-04-27",payment:"unpaid"},
+  {name:"救國團 — 新竹運動中心",client:"李正奇",company:"原點創意",startDate:"2026-04-16",deadline:"",payment:"unpaid"},
+  {name:"AEPL 企業識別",client:"張庭心",company:"",startDate:"2026-04-17",deadline:"",payment:"unpaid"},
+  {name:"2026 兒童藝術教育國際論壇 視覺設計",client:"張育誠",company:"格林希爾會展",startDate:"2026-04-22",deadline:"",payment:"deposit"},
+  {name:"中國醫藥導報 2026年5月台灣報",client:"耿主編",company:"中國醫藥導報",startDate:"2026-04-22",deadline:"2026-04-30",payment:"unpaid"}
+];
+const defaultState={todos:[],projects:[],pomo:{today:0,total:0,minutes:0,lastDate:"",history:[],currentTask:""},settings:{work:25,brk:5,long:15,cycle:4},ui:{tab:"today",filter:"all",search:"",priority:"normal",hideDone:false,phWeek:""}};
+
+const $=id=>document.getElementById(id);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const todayKey=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+function isoDate(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function makeProject(p){const subtasks={};for(let i=0;i<STAGES.length;i++)subtasks[i]=DEFAULT_SUBTASKS[i].map(t=>({id:uid(),text:t,done:false}));return {id:uid(),name:p.name||"",client:p.client||"",company:p.company||"",startDate:p.startDate||"",deadline:p.deadline||"",payment:p.payment||"unpaid",stage:0,subtasks,expandedStage:null,open:false,notes:""}}
+function migrate(s){s.pomo=s.pomo||{today:0,total:0,minutes:0,lastDate:"",history:[],currentTask:""};s.pomo.history=s.pomo.history||[];if(s.pomo.currentTask===undefined)s.pomo.currentTask="";s.ui=s.ui||{};if(s.ui.hideDone===undefined)s.ui.hideDone=false;if(s.ui.phWeek===undefined)s.ui.phWeek="";s.todos.forEach(t=>{if(!t.priority)t.priority="normal";if(t.duration===undefined)t.duration=null});return s}
+function load(){try{const raw=localStorage.getItem(STORAGE_KEY);if(raw)return migrate(Object.assign(structuredClone(defaultState),JSON.parse(raw)))}catch(e){}let s=structuredClone(defaultState);s.projects=SEED_PROJECTS.map(makeProject);return s}
+let state=load();
+
+function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove("show"),2500)}
+function notify(title,body){if("Notification" in window&&Notification.permission==="granted"){try{new Notification(title,{body})}catch(e){}}beep();toast(title+(body?" · "+body:""))}
+let audioCtx;
+function beep(){try{audioCtx||=new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.value=880;g.gain.value=.0001;o.start();g.gain.exponentialRampToValueAtTime(.18,audioCtx.currentTime+.02);g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.6);o.stop(audioCtx.currentTime+.7)}catch(e){}}
+
+/* ───── 雲端同步：即時自動 + 手動 + 切離應用時推送 ───── */
+let syncConfig=null,syncCode="",lastSync=0,lastSentTs=0,fb=null,isSyncing=false,isDirty=false,uploadTimer=null;
+const AUTO_SYNC_BACKUP=15*60*1000; // 備援：每 15 分鐘檢查一次有沒有漏推的
+
+function loadSyncMeta(){try{const c=localStorage.getItem(SYNC_CONFIG_KEY);if(c)syncConfig=JSON.parse(c)}catch(e){}try{const m=JSON.parse(localStorage.getItem(SYNC_META_KEY)||"{}");syncCode=m.syncCode||"";lastSync=m.lastSync||0}catch(e){}}
+function saveSyncMeta(){localStorage.setItem(SYNC_META_KEY,JSON.stringify({syncCode,lastSync}))}
+function timeAgo(ts){const s=Math.floor((Date.now()-ts)/1000);if(s<60)return "剛剛";if(s<3600)return Math.floor(s/60)+" 分前";if(s<86400)return Math.floor(s/3600)+" 時前";return Math.floor(s/86400)+" 天前"}
+function setSyncStatus(text,dotClass){$("syncStatus").textContent=text;$("syncDot").className="sync-dot "+(dotClass||"")}
+function renderSyncStatus(){
+  if(fb){const dirtyMark=isDirty?" · 待上傳":"";setSyncStatus(`已連線 · ${syncCode}${lastSync?" · "+timeAgo(lastSync):""}${dirtyMark}`,"connected");$("syncOpenLabel").textContent="重新設定";$("syncForceRow").hidden=false;$("syncDisconnectRow").hidden=false;$("storageHint").textContent="雲端同步中"}
+  else if(syncConfig&&syncCode){setSyncStatus("連線中…","syncing");$("storageHint").textContent="本地瀏覽器"}
+  else{setSyncStatus("未連線","");$("syncOpenLabel").textContent="設定 Firebase 同步";$("syncForceRow").hidden=true;$("syncDisconnectRow").hidden=true;$("storageHint").textContent="本地瀏覽器"}
+}
+async function connectSync(configObj,code){
+  if(typeof firebase==="undefined"){toast("Firebase 載入中，請稍後再試");setTimeout(()=>connectSync(configObj,code),1500);return}
+  setSyncStatus("連線中…","syncing");
+  try{
+    syncConfig=configObj;syncCode=code;
+    // 注意：Gantt 同步可能已建立 named app（gantt_sync），firebase.apps.length 會 > 0
+    // 必須明確檢查 DEFAULT app 是否存在，否則 firebase.auth() 會噴 No Firebase App '[DEFAULT]'
+    const defaultApp=firebase.apps.find(a=>a.name==="[DEFAULT]");
+    if(!defaultApp){
+      firebase.initializeApp(configObj);
+    }else if(defaultApp.options&&defaultApp.options.projectId!==configObj.projectId){
+      // 使用者換了 Firebase 專案：刪除舊 DEFAULT 後重新初始化
+      await defaultApp.delete();
+      firebase.initializeApp(configObj);
+    }
+    await firebase.auth().signInAnonymously();
+    const db=firebase.firestore();
+    const docRef=db.collection("zaoke").doc(code);
+    const snap=await docRef.get();
+    if(snap.exists){
+      const remote=snap.data();const remoteTs=remote.localTs||0;
+      if(remoteTs>lastSync){applyRemoteState(remote.state);lastSync=remoteTs;saveSyncMeta();toast("✓ 已從雲端載入")}
+      else{await pushNow(docRef);toast("✓ 已上傳本地資料")}
+    }else{await pushNow(docRef);toast("✓ 雲端紀錄已建立")}
+    const unsub=docRef.onSnapshot(snap=>{
+      if(snap.metadata.hasPendingWrites)return;
+      if(!snap.exists)return;
+      const remote=snap.data();
+      if(remote.localTs&&remote.localTs!==lastSentTs&&remote.localTs>lastSync){applyRemoteState(remote.state);lastSync=remote.localTs;saveSyncMeta();renderSyncStatus()}
+    },err=>{console.error(err);setSyncStatus("錯誤："+(err.code||err.message),"error")});
+    fb={db,docRef,unsub};
+    localStorage.setItem(SYNC_CONFIG_KEY,JSON.stringify(configObj));
+    isDirty=false;
+    saveSyncMeta();renderSyncStatus();closeSyncPanel();
+  }catch(e){console.error(e);setSyncStatus("錯誤："+(e.message||e.code),"error");alert("連線失敗："+(e.message||"未知錯誤")+"\n\n常見原因：\n• Firebase Config 格式錯誤\n• 未啟用「匿名」登入\n• Firestore 規則尚未發佈\n• 網路問題");fb=null}
+}
+async function pushNow(docRef){if(isSyncing)return;isSyncing=true;try{const ts=Date.now();lastSentTs=ts;await docRef.set({state:state,localTs:ts,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),device:(navigator.platform||"web")+" · "+(navigator.userAgent.match(/(iPhone|iPad|Mac|Windows|Android)/)||["web"])[0]});lastSync=ts;isDirty=false;saveSyncMeta()}finally{isSyncing=false}}
+function applyRemoteState(remoteState){if(!remoteState)return;state=migrate(Object.assign(structuredClone(defaultState),remoteState));localStorage.setItem(STORAGE_KEY,JSON.stringify(state));rerenderAll()}
+function rerenderAll(){renderTodos();renderProjects();renderStats();renderHistory();renderHideDoneToggle();applyTaskInput()}
+function disconnectSync(){if(fb&&fb.unsub)fb.unsub();fb=null;syncConfig=null;syncCode="";lastSync=0;isDirty=false;localStorage.removeItem(SYNC_CONFIG_KEY);saveSyncMeta();renderSyncStatus();toast("已中斷同步")}
+function queueUpload(){
+  if(!fb)return;
+  clearTimeout(uploadTimer);
+  uploadTimer=setTimeout(async()=>{
+    if(!fb)return;
+    try{await pushNow(fb.docRef);renderSyncStatus()}
+    catch(e){console.error(e)}
+  },1500);
+}
+function save(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+  if(fb){isDirty=true;queueUpload();renderSyncStatus()}
+}
+
+function openSyncPanel(){$("syncConfigInput").value=syncConfig?JSON.stringify(syncConfig,null,2):"";$("syncCodeInput").value=syncCode||"";$("syncPanel").hidden=false;$("syncPanel").scrollIntoView({behavior:"smooth",block:"center"})}
+function closeSyncPanel(){$("syncPanel").hidden=true}
+$("syncOpenRow").addEventListener("click",openSyncPanel);
+$("syncPanelClose").addEventListener("click",closeSyncPanel);
+$("syncCancel").addEventListener("click",closeSyncPanel);
+$("syncConnect").addEventListener("click",async()=>{
+  const raw=$("syncConfigInput").value.trim();
+  const code=$("syncCodeInput").value.trim();
+  if(!raw){alert("請貼上 Firebase Config");return}
+  if(!code){alert("請輸入同步碼");return}
+  if(!/^[a-zA-Z0-9_-]+$/.test(code)){alert("同步碼僅能用英數字、底線、連字符");return}
+  let configObj;
+  try{
+    let json=raw;
+    if(!raw.startsWith("{"))throw new Error("Config 應該是 { ... } 格式");
+    json=json.replace(/([,{]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:/g,'$1"$2":').replace(/'/g,'"').replace(/,\s*}/g,"}").replace(/,\s*]/g,"]");
+    configObj=JSON.parse(json);
+  }catch(e){alert("Config 格式錯誤：\n"+e.message);return}
+  if(!configObj.apiKey||!configObj.projectId){alert("Config 缺少 apiKey 或 projectId");return}
+  await connectSync(configObj,code);
+});
+$("syncForceRow").addEventListener("click",async()=>{if(!fb)return;toast("同步中…");try{await pushNow(fb.docRef);toast("✓ 同步完成");renderSyncStatus()}catch(e){toast("✗ 同步失敗")}});
+$("syncDisconnectRow").addEventListener("click",()=>{if(confirm("確定中斷同步？資料仍保留在本機。"))disconnectSync()});
+loadSyncMeta();renderSyncStatus();
+if(syncConfig&&syncCode)setTimeout(()=>connectSync(syncConfig,syncCode),600);
+
+// 15 分鐘備援同步（即時推送失敗時的兜底）
+setInterval(async()=>{
+  if(!fb||!isDirty)return;
+  try{await pushNow(fb.docRef);renderSyncStatus()}
+  catch(e){console.error(e)}
+},AUTO_SYNC_BACKUP);
+
+// 切離 App 或關掉分頁時推送
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState==="hidden"&&fb&&isDirty){
+    pushNow(fb.docRef).catch(()=>{});
+  }
+});
+window.addEventListener("beforeunload",()=>{if(fb&&isDirty){pushNow(fb.docRef).catch(()=>{})}});
+setInterval(renderSyncStatus,30000);
+
+/* ───── 時鐘 ───── */
+function tick(){const d=new Date();$("clockLabel").textContent=d.toLocaleTimeString("zh-TW",{hour12:false});const wd=["日","一","二","三","四","五","六"][d.getDay()];$("dateLabel").textContent=`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,"0")}.${String(d.getDate()).padStart(2,"0")} 週${wd}`}
+setInterval(tick,1000);tick();
+
+/* ───── 分頁 ───── */
+function switchTab(name){state.ui.tab=name;document.querySelectorAll(".tab-content").forEach(s=>s.classList.toggle("active",s.dataset.tab===name));document.querySelectorAll(".top-tabs button").forEach(b=>b.classList.toggle("active",b.dataset.go===name));window.scrollTo({top:0});save()}
+document.querySelector(".top-tabs").addEventListener("click",e=>{const btn=e.target.closest("button[data-go]");if(btn)switchTab(btn.dataset.go)});
+switchTab(state.ui.tab||"today");
+
+/* ───── Todo ───── */
+const PRI_RANK={high:0,normal:1,low:2};
+function renderPriBtns(){document.querySelectorAll(".pri-btn").forEach(b=>b.classList.toggle("active",b.dataset.p===state.ui.priority))}
+renderPriBtns();
+document.querySelectorAll(".pri-btn").forEach(b=>{b.addEventListener("click",()=>{state.ui.priority=b.dataset.p;renderPriBtns()})});
+function renderHideDoneToggle(){$("hideDoneToggle").checked=!!state.ui.hideDone}
+renderHideDoneToggle();
+$("hideDoneToggle").addEventListener("change",e=>{state.ui.hideDone=e.target.checked;renderTodos()});
+function renderTodos(){
+  const ul=$("todoList");ul.innerHTML="";
+  let list=[...state.todos];
+  if(state.ui.hideDone)list=list.filter(t=>!t.done);
+  if(list.length===0){ul.innerHTML=`<li class="empty">${state.ui.hideDone&&state.todos.some(t=>t.done)?"已完成已隱藏，無待辦":"尚無待辦事項"}</li>`}
+  else{
+    list.sort((a,b)=>{
+      if(a.done!==b.done)return a.done?1:-1;
+      const pa=PRI_RANK[a.priority||"normal"],pb=PRI_RANK[b.priority||"normal"];
+      if(pa!==pb)return pa-pb;
+      if(a.time&&b.time)return a.time.localeCompare(b.time);
+      if(a.time)return -1;if(b.time)return 1;return 0;
+    });
+    list.forEach(t=>{
+      const li=document.createElement("li");
+      const pri=t.priority||"normal";
+      li.className=`todo-item pri-${pri}`+(t.done?" done":"");
+      const dur=t.duration?`<span class="todo-dur">${t.duration} 分</span>`:"";
+      const time=t.time?`<span class="todo-time ${t.fired?"fired":""}">${escapeHtml(t.time)}</span>`:"";
+      li.innerHTML=`<input type="checkbox" class="todo-check" ${t.done?"checked":""} data-id="${t.id}"><span class="todo-text">${escapeHtml(t.text)}</span>${dur}${time}<button type="button" class="todo-del" data-del="${t.id}" aria-label="刪除">×</button>`;
+      ul.appendChild(li);
+    });
+  }
+  const total=state.todos.length;const done=state.todos.filter(t=>t.done).length;
+  $("todoCount").textContent=`${done} / ${total}`;
+  save();
+}
+$("todoAdd").addEventListener("click",addTodo);
+$("todoInput").addEventListener("keydown",e=>{if(e.key==="Enter")addTodo()});
+$("todoTime").addEventListener("keydown",e=>{if(e.key==="Enter")addTodo()});
+$("todoDur").addEventListener("keydown",e=>{if(e.key==="Enter")addTodo()});
+// 點擊時間 pill 任何位置都強制叫出時間選擇器
+$("todoTimePill").addEventListener("click",(e)=>{
+  const input=$("todoTime");
+  if(e.target===input||e.target.tagName==="INPUT")return;
+  try{
+    if(typeof input.showPicker==="function")input.showPicker();
+    else input.focus();
+  }catch(err){input.focus()}
+});
+// 點擊案件日期欄位（開始 / 交稿）任何位置都強制叫出日期選擇器
+document.querySelectorAll(".field-group.date-field").forEach(field=>{
+  field.addEventListener("click",(e)=>{
+    if(e.target.tagName==="INPUT")return;
+    const input=field.querySelector("input[type=date]");
+    if(!input)return;
+    try{
+      if(typeof input.showPicker==="function")input.showPicker();
+      else input.focus();
+    }catch(err){input.focus()}
+  });
+});
+function addTodo(){const text=$("todoInput").value.trim();if(!text){$("todoInput").focus();return}const time=$("todoTime").value;const durRaw=$("todoDur").value.trim();const duration=durRaw?Math.max(0,parseInt(durRaw,10)||0):null;state.todos.push({id:uid(),text,time,duration,priority:state.ui.priority||"normal",done:false,fired:false,dateKey:todayKey()});$("todoInput").value="";$("todoTime").value="";$("todoDur").value="";renderTodos()}
+$("todoList").addEventListener("click",e=>{
+  if(e.target.matches(".todo-check")){const t=state.todos.find(x=>x.id===e.target.dataset.id);if(t){t.done=e.target.checked;renderTodos()}}
+  if(e.target.matches("[data-del]")){state.todos=state.todos.filter(x=>x.id!==e.target.dataset.del);renderTodos()}
+});
+setInterval(()=>{const now=new Date();const cur=String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");let changed=false;state.todos.forEach(t=>{if(t.time===cur&&!t.done&&!t.fired){t.fired=true;changed=true;notify("⏰ 提醒："+t.text,cur)}});if(changed)renderTodos()},20000);
+
+/* ───── Projects ───── */
+function deadlineLabel(s){if(!s)return null;const d=new Date(s+"T23:59:59");if(isNaN(d))return null;const diff=Math.ceil((d-new Date())/86400000);let text="",urgent=false,overdue=false;if(diff<0){text=`已逾期 ${-diff} 天`;overdue=true}else if(diff===0){text="今日交稿";urgent=true}else if(diff<=3){text=`還剩 ${diff} 天`;urgent=true}else if(diff<=7){text=`D-${diff}`;urgent=true}else text=`${s.slice(5).replace("-",".")}`;return {text,urgent,overdue,diff}}
+function projectStatus(p){if(p.stage>=STAGES.length)return "done";const dl=deadlineLabel(p.deadline);if(dl?.overdue)return "overdue";if(dl?.urgent)return "urgent";return "active"}
+function stageDoneCount(p,idx){const subs=p.subtasks?.[idx]||[];if(subs.length===0)return null;return {done:subs.filter(s=>s.done).length,total:subs.length}}
+const PAY_LABEL={unpaid:"未付款",deposit:"訂金",paid:"已付款"};
+function nextPayment(p){return {unpaid:"deposit",deposit:"paid",paid:"unpaid"}[p]||"unpaid"}
+function renderProjects(){
+  const wrap=$("projList");wrap.innerHTML="";
+  const filter=state.ui.filter||"all";const search=(state.ui.search||"").toLowerCase().trim();
+  const sorted=[...state.projects].sort((a,b)=>{const ad=a.startDate||"",bd=b.startDate||"";if(!ad&&!bd)return 0;if(!ad)return 1;if(!bd)return -1;return bd.localeCompare(ad)});
+  let count=0;
+  sorted.forEach(p=>{
+    const status=projectStatus(p);
+    if(filter==="active"&&status==="done")return;if(filter==="urgent"&&status!=="urgent")return;if(filter==="overdue"&&status!=="overdue")return;if(filter==="done"&&status!=="done")return;
+    if(search){const hay=(p.name+" "+p.client+" "+p.company).toLowerCase();if(!hay.includes(search))return}
+    count++;
+    const dl=deadlineLabel(p.deadline);
+    const dlHtml=dl?`<span class="proj-deadline ${dl.overdue?"overdue":dl.urgent?"urgent":""}">${dl.text}</span>`:`<span class="proj-deadline" style="color:var(--text-3)">無截止</span>`;
+    const clientLine=(p.client||p.company)?`<span class="proj-client">${escapeHtml([p.client,p.company].filter(Boolean).join(" / "))}</span>`:"";
+    const div=document.createElement("div");
+    div.className="proj"+(status==="urgent"?" urgent":"")+(status==="overdue"?" overdue":"")+(status==="done"?" complete":"")+(p.open?" open":"");
+    div.dataset.id=p.id;
+    const stagesHtml=STAGES.map((s,i)=>{const frac=stageDoneCount(p,i);const fracStr=frac?`${frac.done}/${frac.total}`:"";const cls=(p.expandedStage===i?" expanded":"")+(p.stage>i?" done":(p.stage===i?" active":""));return `<button class="stage${cls}" data-stage="${i}" type="button"><span>${escapeHtml(s)}</span>${fracStr?`<span class="frac">${fracStr}</span>`:""}</button>`}).join("");
+    let subHtml="";
+    if(p.expandedStage!==null&&p.expandedStage!==undefined){const idx=p.expandedStage;const subs=p.subtasks[idx]||[];subHtml=`<div class="substage"><h4>${escapeHtml(STAGES[idx])} · 細項</h4><ul>${subs.length===0?'<li style="color:var(--text-3);font-style:italic">尚無細項</li>':""}${subs.map(s=>`<li class="${s.done?"done":""}"><input type="checkbox" data-sub="${s.id}" data-stage="${idx}" ${s.done?"checked":""}><span>${escapeHtml(s.text)}</span><button data-subdel="${s.id}" data-stage="${idx}" type="button">×</button></li>`).join("")}</ul><div class="add-sub"><input type="text" placeholder="輸入細項，按 Enter 或加入" data-subadd="${idx}" /><button data-subaddbtn="${idx}" type="button">加入</button></div></div>`}
+    div.innerHTML=`<div class="proj-row" data-toggle="${p.id}"><span class="proj-name">${escapeHtml(p.name)}</span><div class="proj-tags">${clientLine}<span class="pay ${p.payment}" data-pay="${p.id}">${PAY_LABEL[p.payment]||"未付款"}</span></div>${dlHtml}</div><div class="proj-body"><div class="proj-info"><div class="row"><span class="k">開始</span><span class="v">${p.startDate?p.startDate.replace(/-/g,"."):"—"}</span></div><div class="row"><span class="k">交稿</span><span class="v">${p.deadline?p.deadline.replace(/-/g,"."):"未定"}</span></div></div><div class="stages">${stagesHtml}</div>${subHtml}<div class="proj-actions"><div class="left"><button type="button" class="btn ghost" data-stageprev="${p.id}">← 上階段</button><button type="button" class="btn ghost" data-stagenext="${p.id}">下階段 →</button></div><div class="right"><button type="button" class="btn" data-edit="${p.id}">編輯</button><button type="button" class="btn danger" data-pdel="${p.id}">刪除</button></div></div></div>`;
+    wrap.appendChild(div);
+  });
+  if(count===0)wrap.innerHTML=`<div class="empty">沒有符合條件的案件</div>`;
+  $("projCount").textContent=`${count} / ${state.projects.length} 件`;
+  save();
+}
+
+// 用 mousedown / pointerdown 在 button 加 stopPropagation
+function refocusSubAdd(projId, idx){
+  setTimeout(()=>{
+    const projEl=document.querySelector(`.proj[data-id="${projId}"]`);
+    if(!projEl)return;
+    const input=projEl.querySelector(`[data-subadd="${idx}"]`);
+    if(input)input.focus();
+  },10);
+}
+
+$("projList").addEventListener("click",e=>{
+  const t=e.target;
+  if(t.matches("[data-pay]")){e.stopPropagation();const p=state.projects.find(x=>x.id===t.dataset.pay);if(p){p.payment=nextPayment(p.payment);renderProjects()}return}
+  // 細項新增按鈕
+  if(t.matches("[data-subaddbtn]")){
+    e.stopPropagation();
+    const idx=+t.dataset.subaddbtn;
+    const projEl=t.closest(".proj");
+    const projId=projEl.dataset.id;
+    const input=projEl.querySelector(`[data-subadd="${idx}"]`);
+    const text=input.value.trim();
+    if(!text){input.focus();return}
+    const p=state.projects.find(x=>x.id===projId);
+    p.subtasks[idx].push({id:uid(),text,done:false});
+    renderProjects();
+    refocusSubAdd(projId, idx);
+    return;
+  }
+  // 細項刪除
+  if(t.matches("[data-subdel]")){e.stopPropagation();const projEl=t.closest(".proj");const stage=+t.dataset.stage;const p=state.projects.find(x=>x.id===projEl.dataset.id);p.subtasks[stage]=p.subtasks[stage].filter(s=>s.id!==t.dataset.subdel);renderProjects();return}
+  // 細項勾選
+  if(t.matches("[data-sub]")){e.stopPropagation();const projEl=t.closest(".proj");const p=state.projects.find(x=>x.id===projEl.dataset.id);const stage=+t.dataset.stage;const sub=p.subtasks[stage]?.find(s=>s.id===t.dataset.sub);if(sub){sub.done=t.checked;const allDone=p.subtasks[stage].length>0&&p.subtasks[stage].every(s=>s.done);if(allDone&&p.stage<=stage){p.stage=stage+1;if(p.stage===STAGES.length)toast(`✓ ${p.name} 全數完成`)}renderProjects()}return}
+  // 階段點擊
+  const stageEl=t.closest(".stage");
+  if(stageEl){const idx=+stageEl.dataset.stage;const projEl=stageEl.closest(".proj");const p=state.projects.find(x=>x.id===projEl.dataset.id);if(p){p.expandedStage=(p.expandedStage===idx)?null:idx;renderProjects()}return}
+  // 上下階段
+  if(t.matches("[data-stageprev]")){const p=state.projects.find(x=>x.id===t.dataset.stageprev);if(p&&p.stage>0)p.stage--;renderProjects();return}
+  if(t.matches("[data-stagenext]")){const p=state.projects.find(x=>x.id===t.dataset.stagenext);if(p&&p.stage<STAGES.length)p.stage++;if(p&&p.stage===STAGES.length)toast(`✓ ${p.name} 全數完成`);renderProjects();return}
+  // 編輯 / 刪除案件
+  if(t.matches("[data-edit]")){openProjForm(t.dataset.edit);return}
+  if(t.matches("[data-pdel]")){const id=t.dataset.pdel;const p=state.projects.find(x=>x.id===id);if(p&&confirm(`確定刪除「${p.name}」？`)){deleteProjectFromGantt(id);state.projects=state.projects.filter(x=>x.id!==id);renderProjects()}return}
+  // 切換展開（最後檢查，不會誤觸前面）
+  const tg=t.closest("[data-toggle]");
+  if(tg){const p=state.projects.find(x=>x.id===tg.dataset.toggle);if(p){p.open=!p.open;renderProjects();return}}
+});
+$("projList").addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&e.target.matches("[data-subadd]")){
+    e.preventDefault();
+    const projEl=e.target.closest(".proj");
+    const idx=e.target.dataset.subadd;
+    const btn=projEl.querySelector(`[data-subaddbtn="${idx}"]`);
+    if(btn)btn.click();
+  }
+});
+
+let editingId=null,editingSubtasks=null,editingTab=0;
+function closeProjForm(){$("projForm").hidden=true;editingId=null;editingSubtasks=null}
+$("projToggleForm").addEventListener("click",()=>{if(!$("projForm").hidden)closeProjForm();else openProjForm(null)});
+$("pf_cancel").addEventListener("click",closeProjForm);
+$("pf_cancel2").addEventListener("click",closeProjForm);
+function defaultSubtasksObject(){const o={};for(let i=0;i<STAGES.length;i++)o[i]=DEFAULT_SUBTASKS[i].map(t=>({id:uid(),text:t,done:false}));return o}
+function openProjForm(id){if(id){const p=state.projects.find(x=>x.id===id);if(!p)return;editingId=id;editingSubtasks=structuredClone(p.subtasks||defaultSubtasksObject());$("pf_name").value=p.name;$("pf_client").value=p.client;$("pf_company").value=p.company;$("pf_start").value=p.startDate;$("pf_deadline").value=p.deadline;$("pf_payment").value=p.payment;$("pf_save").textContent="更新";$("pf_title").textContent="編輯案件"}else{editingId=null;editingSubtasks=defaultSubtasksObject();["pf_name","pf_client","pf_company","pf_start","pf_deadline"].forEach(id=>$(id).value="");$("pf_payment").value="unpaid";$("pf_save").textContent="建立";$("pf_title").textContent="新增案件"}editingTab=0;document.querySelectorAll("#pf_tabs button").forEach(b=>b.classList.toggle("active",+b.dataset.pftab===0));renderEditSubtasks();$("projForm").hidden=false;
+  // 手機與電腦採不同行為：手機不強制 focus 與全頁捲動，避免鍵盤彈出造成視覺跳動
+  const isMobile=window.matchMedia("(max-width: 879px)").matches;
+  if(isMobile){
+    // 只把表單頂端輕推進視窗，使用 nearest 不會強制捲到頂端
+    requestAnimationFrame(()=>$("projForm").scrollIntoView({behavior:"smooth",block:"nearest"}));
+  }else{
+    $("projForm").scrollIntoView({behavior:"smooth",block:"start"});
+    setTimeout(()=>$("pf_name").focus(),200);
+  }
+}
+function syncSubtasksFromForm(){if(!editingSubtasks)return;const items=$("pf_subList").querySelectorAll(".pf-sub-item");const arr=[];items.forEach(el=>{const id=el.dataset.sid;const text=el.querySelector("input[type=text]").value.trim();const done=el.querySelector("input[type=checkbox]").checked;if(text)arr.push({id,text,done})});editingSubtasks[editingTab]=arr}
+function renderEditSubtasks(){const arr=editingSubtasks[editingTab]||[];const wrap=$("pf_subList");if(arr.length===0)wrap.innerHTML=`<div class="pf-sub-empty">此階段尚無細項</div>`;else wrap.innerHTML=arr.map(s=>`<div class="pf-sub-item ${s.done?"done":""}" data-sid="${s.id}"><input type="checkbox" ${s.done?"checked":""}><input type="text" value="${escapeHtml(s.text)}" placeholder="細項…" /><button type="button" class="del" data-pfsubdel="${s.id}" aria-label="刪除">×</button></div>`).join("");document.querySelectorAll("#pf_tabs button").forEach(b=>{const idx=+b.dataset.pftab;const a=editingSubtasks[idx]||[];const done=a.filter(s=>s.done).length;let frac=b.querySelector(".frac");if(!frac){frac=document.createElement("span");frac.className="frac";b.appendChild(frac)}frac.textContent=a.length>0?` ${done}/${a.length}`:""})}
+$("pf_tabs").addEventListener("click",e=>{const btn=e.target.closest("button[data-pftab]");if(!btn)return;syncSubtasksFromForm();editingTab=+btn.dataset.pftab;document.querySelectorAll("#pf_tabs button").forEach(b=>b.classList.toggle("active",+b.dataset.pftab===editingTab));renderEditSubtasks()});
+$("pf_subAddBtn").addEventListener("click",addEditSub);
+$("pf_subAddInput").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();addEditSub()}});
+function addEditSub(){const text=$("pf_subAddInput").value.trim();if(!text){$("pf_subAddInput").focus();return}syncSubtasksFromForm();editingSubtasks[editingTab].push({id:uid(),text,done:false});$("pf_subAddInput").value="";renderEditSubtasks();$("pf_subAddInput").focus()}
+$("pf_subList").addEventListener("click",e=>{if(e.target.matches("[data-pfsubdel]")){syncSubtasksFromForm();editingSubtasks[editingTab]=editingSubtasks[editingTab].filter(s=>s.id!==e.target.dataset.pfsubdel);renderEditSubtasks()}});
+$("pf_subList").addEventListener("change",e=>{if(e.target.matches("input[type=checkbox]")){syncSubtasksFromForm();renderEditSubtasks()}});
+$("pf_save").addEventListener("click",()=>{const name=$("pf_name").value.trim();if(!name){alert("請輸入案件名稱");$("pf_name").focus();return}syncSubtasksFromForm();const data={name,client:$("pf_client").value.trim(),company:$("pf_company").value.trim(),startDate:$("pf_start").value,deadline:$("pf_deadline").value,payment:$("pf_payment").value};if(editingId){const p=state.projects.find(x=>x.id===editingId);Object.assign(p,data);p.subtasks=editingSubtasks;for(let i=0;i<STAGES.length;i++){const arr=p.subtasks[i]||[];if(arr.length>0&&arr.every(s=>s.done)&&p.stage<=i)p.stage=i+1}toast("✓ 已更新")}else{const newP=makeProject(data);newP.subtasks=editingSubtasks;state.projects.push(newP);if(typeof window.markNeedsGanttSync==="function")window.markNeedsGanttSync(newP.id);toast("✓ 已建立")}closeProjForm();renderProjects()});
+$("projFilters").addEventListener("click",e=>{
+  if(!e.target.matches("button"))return;
+  e.preventDefault();
+  // 保留目前捲動位置 + 鎖定 filter 按鈕區可見，避免 list 變短時整頁向上跳
+  const filterBar=$("projFilters");
+  const barTop=filterBar.getBoundingClientRect().top;
+  state.ui.filter=e.target.dataset.f;
+  document.querySelectorAll("#projFilters button").forEach(b=>b.classList.remove("active"));
+  e.target.classList.add("active");
+  renderProjects();
+  // 還原 filter 按鈕區在視窗中的相對位置，產生「就地切換」的感受
+  requestAnimationFrame(()=>{
+    const newBarTop=filterBar.getBoundingClientRect().top;
+    const delta=newBarTop-barTop;
+    if(Math.abs(delta)>1)window.scrollBy({top:delta,behavior:"auto"});
+  });
+});
+$("projSearch").addEventListener("input",e=>{state.ui.search=e.target.value;renderProjects()});
+
+/* ───── 番茄鐘 ───── */
+const pomo={running:false,mode:"work",remain:0,cycle:0,intv:null};
+function applySettings(){$("setWork").value=state.settings.work;$("setBreak").value=state.settings.brk;$("setLong").value=state.settings.long;$("setCycle").value=state.settings.cycle}
+applySettings();
+function applyTaskInput(){$("pomoTask").value=state.pomo.currentTask||""}
+applyTaskInput();
+$("pomoTask").addEventListener("input",e=>{state.pomo.currentTask=e.target.value;save()});
+["setWork","setBreak","setLong","setCycle"].forEach(id=>{$(id).addEventListener("change",()=>{state.settings.work=+$("setWork").value||25;state.settings.brk=+$("setBreak").value||5;state.settings.long=+$("setLong").value||15;state.settings.cycle=+$("setCycle").value||4;save();if(!pomo.running)resetPomo()})});
+function pomoSecondsForMode(m){return ({work:state.settings.work,brk:state.settings.brk,long:state.settings.long}[m])*60}
+function renderPomo(){const m=Math.floor(pomo.remain/60),s=pomo.remain%60;$("pomoTime").textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");$("pomoMode").className="pomo-mode "+(pomo.mode==="work"?"work":"break");$("pomoMode").textContent=pomo.mode==="work"?"工作中":pomo.mode==="long"?"長休息":"短休息";$("pomoStatus").textContent=pomo.running?"進行中":"待機中";document.title=(pomo.running?$("pomoTime").textContent+" · ":"")+"早課"}
+function resetPomo(){pomo.running=false;pomo.mode="work";pomo.cycle=0;pomo.remain=pomoSecondsForMode("work");clearInterval(pomo.intv);renderPomo()}
+function nextPhase(){
+  if(pomo.mode==="work"){
+    state.pomo.today=(state.pomo.lastDate===todayKey()?state.pomo.today:0)+1;
+    state.pomo.lastDate=todayKey();
+    state.pomo.total+=1;
+    state.pomo.minutes+=state.settings.work;
+    state.pomo.history.push({id:uid(),ts:new Date().toISOString(),duration:state.settings.work,mode:"work",task:(state.pomo.currentTask||"").trim()});
+    if(state.pomo.history.length>2000)state.pomo.history=state.pomo.history.slice(-2000);
+    notify("🍅 番茄完成","起來活動一下");
+    pomo.cycle+=1;
+    pomo.mode=(pomo.cycle%state.settings.cycle===0)?"long":"brk";
+  }else{notify("☕ 休息結束","回到工作");pomo.mode="work"}
+  pomo.remain=pomoSecondsForMode(pomo.mode);
+  renderStats();renderHistory();save();
+}
+function renderStats(){if(state.pomo.lastDate!==todayKey())state.pomo.today=0;$("statToday").textContent=state.pomo.today;$("statTotal").textContent=state.pomo.total;$("statMin").textContent=state.pomo.minutes}
+
+/* ───── 紀錄與統計 ───── */
+function getWeekRange(date){
+  // 週一至週日
+  const d=new Date(date);d.setHours(0,0,0,0);
+  const daysSinceMon=(d.getDay()+6)%7;
+  const mon=new Date(d);mon.setDate(d.getDate()-daysSinceMon);
+  const sun=new Date(mon);sun.setDate(mon.getDate()+6);
+  return {start:mon,end:sun};
+}
+function formatWk(d){return `${d.getMonth()+1}/${d.getDate()}`}
+
+function renderHistory(){
+  const hist=state.pomo.history||[];const today=todayKey();
+  // 今日 chips
+  const todays=hist.filter(h=>h.ts.slice(0,10)===today).sort((a,b)=>a.ts.localeCompare(b.ts));
+  if(todays.length===0)$("phToday").innerHTML=`<span class="ph-chip-empty">尚無紀錄</span>`;
+  else $("phToday").innerHTML=todays.map(h=>{const d=new Date(h.ts);const tm=`${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;const taskHtml=h.task?` · <span class="task">${escapeHtml(h.task)}</span>`:"";return `<span class="ph-chip">${tm} · ${h.duration}m${taskHtml}</span>`}).join("");
+  $("phTodayMeta").textContent=todays.length>0?`${todays.length} 顆 · ${todays.reduce((s,h)=>s+h.duration,0)} 分`:"—";
+
+  // 每週 7 天滑動檢視（週一 → 週日）
+  const WEEKS=16;
+  const dayNames=["日","一","二","三","四","五","六"]; // 由 getDay() 索引
+  const now2=new Date();
+  const curMon=new Date(now2);curMon.setHours(0,0,0,0);
+  curMon.setDate(now2.getDate()-((now2.getDay()+6)%7));
+  const todayDt=new Date(today);todayDt.setHours(23,59,59,999);
+  const todayMs=todayDt.getTime();
+  const pages=[];
+  for(let i=WEEKS-1;i>=0;i--){
+    const wkStart=new Date(curMon);wkStart.setDate(curMon.getDate()-i*7);
+    const days=[];
+    for(let d=0;d<7;d++){
+      const dt=new Date(wkStart);dt.setDate(wkStart.getDate()+d);
+      const key=isoDate(dt);
+      const sessions=hist.filter(h=>h.ts.slice(0,10)===key);
+      days.push({key,date:dt,isToday:key===today,isFuture:dt.getTime()>todayMs,count:sessions.length,min:sessions.reduce((s,h)=>s+h.duration,0)});
+    }
+    pages.push({weekStartKey:isoDate(wkStart),days});
+  }
+  const allCounts=pages.flatMap(p=>p.days.map(d=>d.count));
+  const maxC=Math.max(1,...allCounts);
+  $("phWeekPages").innerHTML=pages.map(p=>`<div class="ph-week-page" data-week="${p.weekStartKey}"><div class="ph-page-bars">${p.days.map(d=>{const h=d.count>0?Math.max(8,Math.round((d.count/maxC)*100)):2;return `<div class="ph-page-col" data-key="${d.key}"><div class="ph-page-bar ${d.isToday?"today":""}" style="height:${h}%">${d.count>0?`<span class="v">${d.count}</span>`:""}</div></div>`}).join("")}</div><div class="ph-page-labels">${p.days.map(d=>`<div class="ph-page-label"><span class="ph-page-num ${d.isToday?"today":""} ${d.isFuture?"future":""}">${d.date.getDate()}</span></div>`).join("")}</div></div>`).join("");
+
+  // 捲到目前選定週次（以該週週一為錨點）
+  const selectedDate=state.ui.phWeek?new Date(state.ui.phWeek):new Date();
+  const selMon=new Date(selectedDate);selMon.setHours(0,0,0,0);
+  selMon.setDate(selectedDate.getDate()-((selectedDate.getDay()+6)%7));
+  const selMonKey=isoDate(selMon);
+  setTimeout(()=>{
+    const wrap=$("phWeekWrap");if(!wrap)return;
+    const target=wrap.querySelector(`.ph-week-page[data-week="${selMonKey}"]`);
+    if(target)wrap.scrollLeft=target.offsetLeft;
+    else wrap.scrollLeft=wrap.scrollWidth;
+    const tw=document.querySelector(".ph-today-wrap");
+    if(tw)tw.scrollLeft=tw.scrollWidth;
+  },50);
+
+  updateWeekStats();
+
+  // 累計摘要
+  const monKey=today.slice(0,7);const monthSessions=hist.filter(h=>h.ts.slice(0,7)===monKey);
+  $("phSummary").innerHTML=`<div>本月 <b>${monthSessions.length}</b> 顆 / <b>${monthSessions.reduce((s,h)=>s+h.duration,0)}</b> 分</div><div>累計 <b>${hist.length}</b> 顆 / <b>${hist.reduce((s,h)=>s+h.duration,0)}</b> 分</div>`;
+}
+
+function updateWeekStats(){
+  const hist=state.pomo.history||[];
+  const pickedDate=state.ui.phWeek?new Date(state.ui.phWeek):new Date();
+  const {start,end}=getWeekRange(pickedDate);
+  $("phWkRange").textContent=`${formatWk(start)} – ${formatWk(end)}`;
+  $("phWkPicker").value=isoDate(pickedDate);
+  const startKey=isoDate(start),endKey=isoDate(end);
+  const wkSessions=hist.filter(h=>{const k=h.ts.slice(0,10);return k>=startKey&&k<=endKey});
+  const wkCnt=wkSessions.length;const wkMin=wkSessions.reduce((s,h)=>s+h.duration,0);
+  $("wsTotal").textContent=wkCnt>0?`${wkCnt} 顆 · ${wkMin} 分`:"— 顆 · — 分";
+  const taskMap=new Map();
+  wkSessions.forEach(s=>{const k=(s.task||"").trim()||"__empty__";if(!taskMap.has(k))taskMap.set(k,{count:0,min:0});const o=taskMap.get(k);o.count++;o.min+=s.duration});
+  const tasks=[...taskMap.entries()].map(([k,v])=>({task:k,count:v.count,min:v.min})).sort((a,b)=>b.count-a.count);
+  if(tasks.length===0)$("wsTasks").innerHTML=`<div class="ws-empty">這週沒有番茄紀錄</div>`;
+  else $("wsTasks").innerHTML=tasks.map(t=>{const isEmpty=t.task==="__empty__";const name=isEmpty?'<span class="name empty">（未填寫工作項目）</span>':`<span class="name">${escapeHtml(t.task)}</span>`;return `<div class="ws-task">${name}<span class="count">${t.count} 顆</span><span class="min">${t.min} 分</span></div>`}).join("");
+}
+
+function scrollToWeek(weekStartKey){
+  const wrap=$("phWeekWrap");if(!wrap)return;
+  const target=wrap.querySelector(`.ph-week-page[data-week="${weekStartKey}"]`);
+  if(target)wrap.scrollTo({left:target.offsetLeft,behavior:"smooth"});
+}
+function setSelectedWeek(date){
+  // 以該週週一為錨點
+  const mon=new Date(date);mon.setHours(0,0,0,0);
+  mon.setDate(date.getDate()-((date.getDay()+6)%7));
+  state.ui.phWeek=isoDate(mon);
+  updateWeekStats();
+  scrollToWeek(state.ui.phWeek);
+  save();
+}
+
+// 週篩選器
+$("phPrevWk").addEventListener("click",()=>{const d=state.ui.phWeek?new Date(state.ui.phWeek):new Date();d.setDate(d.getDate()-7);setSelectedWeek(d)});
+$("phNextWk").addEventListener("click",()=>{const d=state.ui.phWeek?new Date(state.ui.phWeek):new Date();d.setDate(d.getDate()+7);setSelectedWeek(d)});
+$("phWkPicker").addEventListener("change",e=>{if(e.target.value)setSelectedWeek(new Date(e.target.value))});
+
+// 點某天跳到該週
+$("phWeekPages").addEventListener("click",e=>{
+  const col=e.target.closest(".ph-page-col");
+  if(col&&col.dataset.key)setSelectedWeek(new Date(col.dataset.key));
+});
+
+// 滑動同步：scroll-snap 切換時更新統計
+let phScrollTimer=null;
+$("phWeekWrap").addEventListener("scroll",()=>{
+  clearTimeout(phScrollTimer);
+  phScrollTimer=setTimeout(()=>{
+    const wrap=$("phWeekWrap");
+    const pageW=wrap.clientWidth;
+    if(pageW===0)return;
+    const idx=Math.round(wrap.scrollLeft/pageW);
+    const pages=wrap.querySelectorAll(".ph-week-page");
+    if(pages[idx]){
+      const wk=pages[idx].dataset.week;
+      if(wk!==state.ui.phWeek){
+        state.ui.phWeek=wk;
+        updateWeekStats();
+        save();
+      }
+    }
+  },150);
+});
+
+$("pomoStart").addEventListener("click",()=>{if(pomo.running)return;if(pomo.remain<=0)pomo.remain=pomoSecondsForMode(pomo.mode);pomo.running=true;try{audioCtx||=new (window.AudioContext||window.webkitAudioContext)();audioCtx.resume()}catch(e){}pomo.intv=setInterval(()=>{pomo.remain-=1;if(pomo.remain<=0)nextPhase();renderPomo()},1000);renderPomo()});
+$("pomoPause").addEventListener("click",()=>{pomo.running=false;clearInterval(pomo.intv);renderPomo()});
+$("pomoReset").addEventListener("click",resetPomo);
+$("pomoSkip").addEventListener("click",()=>{pomo.remain=1});
+
+/* ───── 通知權限 ───── */
+function refreshPerm(){const el=$("permStatus");if(!el)return;if(!("Notification" in window)){el.textContent="不支援";return}const p=Notification.permission;if(p==="granted"){el.textContent="✓ 已啟用";el.style.color="var(--green)"}else if(p==="denied"){el.textContent="已封鎖";el.style.color="var(--red)"}else{el.textContent="點此啟用 ›";el.style.color="var(--accent)"}}
+$("permRow").addEventListener("click",async()=>{if(Notification.permission==="default"){await Notification.requestPermission();refreshPerm()}else if(Notification.permission==="denied")alert("通知已被瀏覽器封鎖")});
+refreshPerm();
+
+/* ───── 匯出 / 匯入 / 重置 ───── */
+$("exportBtn").addEventListener("click",()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=`zaoke-backup-${todayKey()}.json`;a.click();URL.revokeObjectURL(url);toast("✓ 已下載備份檔")});
+$("importBtn").addEventListener("click",()=>$("importFile").click());
+$("importFile").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const data=JSON.parse(r.result);if(confirm("確定覆蓋目前資料？")){state=migrate(Object.assign(structuredClone(defaultState),data));save();rerenderAll();resetPomo();toast("✓ 匯入完成")}}catch(err){alert("檔案格式錯誤")}};r.readAsText(f)});
+$("reseedBtn").addEventListener("click",()=>{if(confirm("這會清除目前所有案件並重新載入預設清單，確定嗎？")){state.projects=SEED_PROJECTS.map(makeProject);save();renderProjects();toast("✓ 已重置案件")}});
+
+/* PWA */
+if("serviceWorker" in navigator&&location.protocol!=="file:"){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{})})}
+
+renderTodos();renderProjects();renderStats();renderHistory();resetPomo();
+let lastDay=todayKey();
+setInterval(()=>{if(todayKey()!==lastDay){lastDay=todayKey();state.pomo.today=0;save();renderTodos();renderStats();renderHistory()}},60000);
+</script>
+
+  <script>
+const GANTT_FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDUb46d7LKl_dS-Hy--kHcXDYG866bloI8",
+  authDomain: "gantt-b3da5.firebaseapp.com",
+  projectId: "gantt-b3da5",
+  storageBucket: "gantt-b3da5.firebasestorage.app",
+  messagingSenderId: "354718313440",
+  appId: "1:354718313440:web:12d34e5af57f5111b45985"
+};
+
+let _ganttDb = null;
+let _ganttReady = false;
+
+// _syncedProjectIds：已實際推送到 Gantt 的案件（用於後續刪除同步）
+const _syncedProjectIds = new Set(
+  JSON.parse(localStorage.getItem('desk_synced_to_gantt') || '[]')
+);
+// _pendingGanttSync：被明確標記「需要推送」的案件
+// 預設行為改為「不主動推送任何東西」，只有透過 markNeedsGanttSync() 明確打標的案件才會推
+// 這樣可以避免：重開網頁、雲端同步進來、編輯舊案件 等情境造成的重複同步
+const _pendingGanttSync = new Set(
+  JSON.parse(localStorage.getItem('desk_pending_gantt_sync') || '[]')
+);
+
+function _persistGanttSets() {
+  localStorage.setItem('desk_synced_to_gantt', JSON.stringify([..._syncedProjectIds]));
+  localStorage.setItem('desk_pending_gantt_sync', JSON.stringify([..._pendingGanttSync]));
+}
+
+// 對外暴露：在「新增案件」按下建立時呼叫，幫該案件打上「需推送」標記
+window.markNeedsGanttSync = function(projectId) {
+  if (!projectId) return;
+  if (_syncedProjectIds.has(projectId)) return; // 已推過就不重複
+  _pendingGanttSync.add(projectId);
+  _persistGanttSets();
+};
+
+async function initGanttFirebase() {
+  try {
+    const ganttApp =
+      firebase.apps.find(a => a.name === 'gantt_sync') ||
+      firebase.initializeApp(GANTT_FIREBASE_CONFIG, 'gantt_sync');
+    _ganttDb = ganttApp.firestore();
+    await ganttApp.auth().signInAnonymously();
+    _ganttReady = true;
+    await cleanupOldGanttPushes();
+    syncPendingProjects();
+  } catch (err) {
+    console.warn('[GanttSync] 初始化失敗：', err.message);
+  }
+}
+
+// 一次性清理：把早課之前用「黑名單」邏輯推送到 Gantt 的舊資料全部刪除
+// 改為白名單邏輯後，這些資料不應該存在於 Gantt（使用者是手動建立的）
+// 只執行一次，靠 localStorage 旗標保證
+async function cleanupOldGanttPushes() {
+  const CLEANUP_KEY = 'desk_gantt_cleanup_done_v1';
+  if (localStorage.getItem(CLEANUP_KEY) === '1') return;
+  if (!_ganttReady || !_ganttDb) return;
+  const toDelete = [..._syncedProjectIds];
+  if (toDelete.length === 0) {
+    localStorage.setItem(CLEANUP_KEY, '1');
+    return;
+  }
+  console.log('[GanttSync] 開始清理早課曾推送的 ' + toDelete.length + ' 個舊案件...');
+  let ok = 0, fail = 0;
+  for (const id of toDelete) {
+    try {
+      await _ganttDb.collection('shared_cases').doc(id).delete();
+      ok++;
+    } catch (e) {
+      fail++;
+      console.warn('[GanttSync] 清理失敗：', id, e.message);
+    }
+  }
+  _syncedProjectIds.clear();
+  _persistGanttSets();
+  localStorage.setItem(CLEANUP_KEY, '1');
+  console.log('[GanttSync] 清理完成：成功 ' + ok + ' 筆，失敗 ' + fail + ' 筆');
+  if (typeof toast === 'function') toast('✓ 已清理 Gantt 上的舊推送（' + ok + ' 筆）');
+}
+
+async function syncProjectToGantt(project) {
+  if (!_ganttReady || !_ganttDb) return;
+  if (!_pendingGanttSync.has(project.id)) return; // 只推「明確打標」的案件
+  if (_syncedProjectIds.has(project.id)) {
+    // 防呆：若已在已同步集合，從 pending 清掉
+    _pendingGanttSync.delete(project.id);
+    _persistGanttSets();
+    return;
+  }
+  try {
+    await _ganttDb.collection('shared_cases').doc(project.id).set({
+      id:        project.id,
+      name:      project.name      || '',
+      client:    project.client    || '',
+      company:   project.company   || '',
+      startDate: project.startDate || '',
+      deadline:  project.deadline  || '',
+      payment:   project.payment   || 'unpaid',
+      syncedAt:  firebase.firestore.FieldValue.serverTimestamp(),
+      source:    'desk'
+    });
+    _syncedProjectIds.add(project.id);
+    _pendingGanttSync.delete(project.id);
+    _persistGanttSets();
+    if (typeof toast === 'function') toast('📅 已同步至甘特圖：' + project.name);
+  } catch (err) {
+    console.warn('[GanttSync] 同步失敗：', err.message);
+  }
+}
+async function deleteProjectFromGantt(projectId) {
+  if (!_ganttReady || !_ganttDb) return;
+  // 若還沒推就只清 pending；推過才打去 Gantt 刪
+  if (_pendingGanttSync.has(projectId)) {
+    _pendingGanttSync.delete(projectId);
+    _persistGanttSets();
+  }
+  if (!_syncedProjectIds.has(projectId)) return;
+  try {
+    await _ganttDb.collection('shared_cases').doc(projectId).delete();
+    _syncedProjectIds.delete(projectId);
+    _persistGanttSets();
+    console.log('[GanttSync] 已從甘特刪除：', projectId);
+  } catch (err) {
+    console.warn('[GanttSync] 刪除失敗：', err.message);
+  }
+}
+function syncPendingProjects() {
+  if (!state || !state.projects) return;
+  state.projects.forEach(p => {
+    if (_pendingGanttSync.has(p.id)) syncProjectToGantt(p);
+  });
+}
+
+(function patchPushNow() {
+  const waitAndPatch = () => {
+    if (typeof pushNow !== 'function') { setTimeout(waitAndPatch, 300); return; }
+    const _orig = pushNow;
+    window.pushNow = async function(docRef) {
+      const result = await _orig.call(this, docRef);
+      if (state && state.projects) {
+        state.projects.forEach(p => {
+          if (_pendingGanttSync.has(p.id)) syncProjectToGantt(p);
+        });
+      }
+      return result;
+    };
+  };
+  waitAndPatch();
+})();
+
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(initGanttFirebase, 1000);
+});
+</script>
+</body>
+</html>
