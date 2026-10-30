@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#f5f3ee">
   <title>設計行政工作台｜個人工作台</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='14' fill='%23ad513b'/%3E%3Cpath d='M13 13h10v10H13zm12 12h10v10H25z' fill='%23fff7eb'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=0.4.0">
+  <link rel="stylesheet" href="styles.css?v=0.4.1">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-180.png">
 </head>
@@ -21,20 +21,23 @@
       <a href="#gantt" data-nav="gantt"><span data-icon="gantt"></span><span>專案排程</span></a>
       <a href="#review" data-nav="review"><span data-icon="layers"></span><span>資料核對</span></a>
       <a href="#updates" data-nav="updates"><span data-icon="list"></span><span>更新紀錄</span></a>
+      <a href="https://receipt.jia-meiyu.com/" target="_blank" rel="noopener noreferrer"><span data-icon="receipt"></span><span>勞報單</span></a>
+      <a href="https://quote.jia-meiyu.com/" target="_blank" rel="noopener noreferrer"><span data-icon="edit"></span><span>報價單</span></a>
     </nav>
     <a class="billing-link" href="https://dashboard.jia-meiyu.com/projects" target="_blank" rel="noopener noreferrer"><span data-icon="receipt"></span><span>設計接案帳單</span><span data-icon="external"></span></a>
     <button class="text-btn" data-action="account">帳戶與備份</button>
   </header>
   <main id="main" tabindex="-1"></main>
-  <footer class="site-footer"><span><i class="status-dot"></i>更換裝置前請確認已同步</span><a href="#updates">工作台暫名 / v0.4.0・版本更新紀錄</a></footer>
+  <footer class="site-footer"><span><i class="status-dot"></i>更換裝置前請確認已同步</span><a href="#updates">工作台暫名 / v0.4.1・版本更新紀錄</a></footer>
   <div id="timer-dock" hidden></div>
   <div id="toast" role="status" aria-live="polite"></div>
   <dialog id="modal" aria-labelledby="modal-title"><div id="modal-content"></div></dialog>
   </div>
-  <script src="core.js?v=0.4.0"></script>
-  <script src="runtime.js?v=0.4.0"></script>
-  <script src="integration.js?v=0.4.0"></script>
-  <script src="app.js?v=0.4.0"></script>
+  <script src="core.js?v=0.4.1"></script>
+  <script src="project-tools.js?v=0.4.1"></script>
+  <script src="runtime.js?v=0.4.1"></script>
+  <script src="integration.js?v=0.4.1"></script>
+  <script src="app.js?v=0.4.1"></script>
   <script src="register-worker.js"></script>
 </body>
 </html>

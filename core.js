@@ -12,6 +12,7 @@ function validate(s){
  const date=v=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v)&&!isNaN(Date.parse(v))&&new Date(v).toISOString().slice(0,10)===v;
  for(const k of ['projects','tasks','todos','logs','holidays'])if(!Array.isArray(s[k]))fail(k);
  for(const k of ['projects','tasks','todos','logs']){const seen=new Set();for(const x of s[k]){if(!x||!id(x.id)||seen.has(x.id))fail(k+' 識別碼重複或缺少');seen.add(x.id);if(!str(x.name))fail(k+' 名稱');}}
+ for(const p of s.projects){if(p.deletedAt!=null&&(!num(p.deletedAt)||p.deletedAt===0))fail('專案刪除時間');for(const k of ['periodCustomer','periodLabel','periodWork'])if(p[k]!=null&&!str(p[k]))fail('專案期別');}
  const ps=new Set(s.projects.map(x=>x.id)),ts=new Set(s.tasks.map(x=>x.id)),td=new Set(s.todos.map(x=>x.id));
  for(const p of s.projects)if(!date(p.start)||(p.deadline&&!date(p.deadline))||!/^#[0-9a-f]{6}$/i.test(p.color))fail('案件日期或色彩');
  for(const t of s.tasks)if(!ps.has(t.projectId)||!date(t.start)||!date(t.end)||t.end<t.start||!['work','waiting','milestone'].includes(t.kind)||!(t.estimate===null||num(t.estimate))||typeof t.done!=='boolean')fail('任務關聯、日期或估時');

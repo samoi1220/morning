@@ -1,7 +1,7 @@
 'use strict';
 
 function restDay(d){return [0,6].includes(dayOfWeek(d))||(state.holidays||[]).some(h=>h.date===d);}
-function unallocatedHours(){return state.tasks.filter(t=>!t.done&&t.estimate>0&&t.kind!=='milestone'&&workingDays(t.start,t.end).length===0).reduce((sum,t)=>sum+t.estimate/60,0);}
+function unallocatedHours(){return state.tasks.filter(t=>DeskProjects.taskActive(state,t)&&!t.done&&t.estimate>0&&t.kind!=='milestone'&&workingDays(t.start,t.end).length===0).reduce((sum,t)=>sum+t.estimate/60,0);}
 function estimateLabel(t){
  if(t.estimate>0)return `預估 ${t.estimate/60} 小時${t.kind==='work'?'':t.kind==='milestone'?'・節點計入':'・等待期間計入'}`;
  if(t.estimate===null)return '尚未估時';
@@ -39,7 +39,7 @@ function migrationView(){
  <div class="review-toolbar"><label>搜尋案件<input id="review-search" type="search" placeholder="輸入帳單、甘特圖或早課名稱"></label><label>顯示範圍<select id="review-filter"><option value="all">全部 ${s.projects} 項</option value="pending">待確認對應 ${s.pending} 項</option><option value="matched">已對應帳單 ${s.linked} 項</option><option value="internal">營運事項 ${s.internal} 項</option><option value="differences">日期或狀態有差異</option></select></label></div>
  <div class="review-projects">${records.map(r=>`<article class="card review-project" data-review-status="${r.status}" data-has-diff="${r.issues.length>0}" data-review-name="${esc([r.name,r.ganttName,r.morningName,...r.candidates.map(c=>c.name)].join(' ').toLowerCase())}"><div class="review-project-head"><h2>${esc(project(r.projectId)?.name||r.name)}</h2>${mappingBadge(r.status)}</div><p>${esc(r.reason)}</p><dl class="source-grid"><dt>甘特圖原名</dt><dd>${esc(r.ganttName)}</dd><dt>早課原名</dt><dd>${esc(r.morningName||'無早課案件')}</dd><dt>帳單對應</dt><dd>${r.billingId?esc(r.name)+' · '+esc(r.billingId):r.status==='internal'?'營運事項，無須對應帳單':'待確認'}</dd></dl>${datesEvidence(r)}${r.issues.length?`<ul class="review-issues">${r.issues.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}
  ${r.candidates.length?`<details class="candidate-list"><summary>查看 ${r.candidates.length} 筆帳單候選（尚未套用）</summary>${r.candidates.map(c=>`<div><strong>${esc(c.name)}</strong><span>${esc((c.startDate||'').slice(0,10)||'開始日期未填')} · ${esc(c.clientOrg||c.clientName||'客戶未填')}</span><small>${esc(c.reason)} · 帳單 ID ${esc(c.id)}</small></div>`).join('')}</details>`:''}
- <div class="review-project-foot"><span>${r.bars} 筆原排程 · ${r.rawHours} 小時預估</span><button class="text-btn" data-action="project-detail" data-id="${r.projectId}">查看案件與任務 ${icon('right')}</button></div></article>`).join('')}</div><p id="review-empty" class="empty" hidden>沒有符合條件的案件。</p>`;
+ ${project(r.projectId)?legacyProjectEvidence(project(r.projectId)):""}<div class="review-project-foot"><span>${project(r.projectId)?.deletedAt?'已刪除（可復原） · ':''}${r.bars} 筆原排程 · ${r.rawHours} 小時預估</span><button class="text-btn" data-action="project-detail" data-id="${r.projectId}">查看案件與任務 ${icon('right')}</button></div></article>`).join('')}</div><p id="review-empty" class="empty" hidden>沒有符合條件的案件。</p>`;
 }
 function bindMigration(){
  const input=$('#review-search'),select=$('#review-filter');if(!input||!select)return;
