@@ -1,44 +1,7 @@
-/* 早課 · Service Worker (v3 — 修正快取相容性) */
-const CACHE = "zaoke-v3";
-const FILES = [
-  "./",
-  "./index.html",
-  "./morning.html",
-  "./manifest.json",
-  "./icon-180.png",
-  "./icon-192.png",
-  "./icon-512.png"
-];
-
-self.addEventListener("install", e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES).catch(()=>{})));
-  self.skipWaiting();
-});
-
-self.addEventListener("activate", e => {
-  e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    )
-  );
-  self.clients.claim();
-});
-
-self.addEventListener("fetch", e => {
-  if (e.request.method !== "GET") return;
-  // 只處理同源 http(s) 請求；不快取 chrome-extension、Google API、Firebase 等
-  const url = new URL(e.request.url);
-  if (url.origin !== location.origin) return;
-
-  e.respondWith(
-    fetch(e.request)
-      .then(resp => {
-        if (resp && resp.status === 200 && resp.type === "basic") {
-          const copy = resp.clone();
-          caches.open(CACHE).then(c => c.put(e.request, copy));
-        }
-        return resp;
-      })
-      .catch(() => caches.match(e.request).then(r => r || caches.match("./index.html")))
-  );
+const CACHE='design-desk-v0.4.0';
+const ASSETS=['/','/index.html','/styles.css','/core.js','/runtime.js','/integration.js','/app.js','/firebase-client.js','/jf-openhuninn-1.1.ttf','/manifest.json','/register-worker.js','/icon-180.png','/icon-192.png','/icon-512.png'];
+self.addEventListener('install',event=>{self.skipWaiting();});
+self.addEventListener('activate',event=>{event.waitUntil((async()=>{for(const key of await caches.keys())if((key.startsWith('zaoke-')||key.startsWith('design-desk-'))&&key!==CACHE)await caches.delete(key);await self.clients.claim();})());});
+self.addEventListener('fetch',event=>{const url=new URL(event.request.url);if(event.request.method!=='GET'||url.origin!==self.location.origin||!ASSETS.includes(url.pathname))return;
+ event.respondWith((async()=>{try{const response=await fetch(event.request);if(response.ok){const cache=await caches.open(CACHE);await cache.put(event.request,response.clone());}return response;}catch(error){const cached=await caches.match(event.request);if(cached)return cached;throw error;}})());
 });
