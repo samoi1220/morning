@@ -1,4 +1,4 @@
-const CACHE='design-desk-v0.4.1';
+const CACHE='design-desk-v0.4.2';
 const ASSETS=['/','/index.html','/styles.css','/core.js','/project-tools.js','/runtime.js','/integration.js','/app.js','/firebase-client.js','/jf-openhuninn-1.1.ttf','/manifest.json','/register-worker.js','/icon-180.png','/icon-192.png','/icon-512.png'];
 self.addEventListener('install',event=>{self.skipWaiting();});
 self.addEventListener('activate',event=>{event.waitUntil((async()=>{for(const key of await caches.keys())if((key.startsWith('zaoke-')||key.startsWith('design-desk-'))&&key!==CACHE)await caches.delete(key);await self.clients.claim();})());});

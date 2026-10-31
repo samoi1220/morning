@@ -9,7 +9,7 @@ function setAccess(unlocked){deskUnlocked=unlocked;const gate=document.querySele
 function errorMessage(e){const messages={'auth/popup-closed-by-user':'登入視窗已關閉，可再次登入。','auth/popup-blocked':'瀏覽器擋住登入視窗，請允許此網站開啟彈出視窗。','auth/unauthorized-domain':'此預覽網址尚未獲准登入，請使用 localhost 或正式網址。','permission-denied':'私人資料區權限尚未設定，資料仍保留本機。','unavailable':'目前無法連線，請稍後重試。'};return messages[e.code]||e.message||'操作未完成，請稍後重試。';}
 async function bootAuth(){
  if(SYNC_TEST){authMessage='本機操作測試，不連接雲端';setAccess(true);return;}
- try{deskClient=await (await import('./firebase-client.js?v=0.4.1')).createClient();deskClient.observe(async user=>{
+ try{deskClient=await (await import('./firebase-client.js?v=0.4.2')).createClient();deskClient.observe(async user=>{
   DeskStore.disconnect();deskUser=null;setAccess(false);
   if(!user){authMessage='請使用你的 Google 帳戶登入。';setAccess(false);return;}
   try{const token=await user.getIdTokenResult();if(user.email!=='jamaisdesignss@gmail.com'||!user.emailVerified||token.signInProvider!=='google.com'){authMessage='此工作台只開放指定的 Google 帳戶。';await deskClient.logout();return;}
